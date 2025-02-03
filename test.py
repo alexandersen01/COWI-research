@@ -175,7 +175,7 @@ class CircleCoverageSolver:
 
 # Example usage
 if __name__ == "__main__":
-    # Define a simple L-shaped room
+    # simple L-shaped room
     room_vertices = [(0,0), (10,0), (10,5), (5,5), (5,10), (0,10)]
     
     solver = CircleCoverageSolver(room_vertices, 

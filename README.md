@@ -13,11 +13,13 @@ Lower $\frac{w_1}{w_2}$ ratio $\to$ uses fewer circles but might sacrifice some 
 ### The maths behind it:
 
 Objective function: 
+
 $$
 \begin{align}
 \max z=w_1 \sum_{kl}y_{kl} - w_2\sum_{ij}x_{ij}
 \end{align}
 $$
+
 Where: 
 - $w_1$ is the area coverage weight
 - $w_2$ is the circle weight
