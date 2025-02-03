@@ -15,6 +15,7 @@
 
 #### Eksempel på hva som kan være alternativ løsning:
 * mixed integer linear programming
+* geometric optimization approach (simpler)
 
 
 ### Tentativ plan:
@@ -27,7 +28,7 @@
 * **Alle:** noterer seg *2 algoritmer*, som kan løse problemet, og kan bygges videre på (eksalerbart).
 * **ALLE:** Få MIRO-passordet fra COWI og se på MIRO. 
 * **ALLE**: Tenk på hva som må gjøres for å utvikle MVP.
-* **ALLE:** last ned 'curser AI'
+* **ALLE:** last ned 'cursor AI'
 * **Jakob** lager GUI (visualiseringsverktøy)
 * **Thone:** Lage Discord gruppe. 
 
