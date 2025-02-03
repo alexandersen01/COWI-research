@@ -42,8 +42,11 @@ a_{ijkl} =
 1\quad\text{if a circle at ($ij$) can cover cell ($kj$)}\\
 0\quad\text{otherwise}
 \end{cases}
-\\
-\text{OR}\\
+$$
+
+OR
+
+$$
 a_{ijkl} = 
 \begin{cases}
 1\quad\text{if }(i-k)^2 + (j-l)^2 \leq (r + \frac{s}{2})^2\\
