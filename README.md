@@ -1,5 +1,7 @@
 ## How to use:
 
+This program uses the `pulp` package – which is open source😁
+
 The user can adjust the following params: 
 - Room dimensions
 - Weight between circles and coverage (which is more important?)
