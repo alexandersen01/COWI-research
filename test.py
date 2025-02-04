@@ -199,7 +199,7 @@ if __name__ == "__main__":
     )
 
     circles, cells, covered_area, coverage_percentage = solver.solve(
-        coverage_weight=0.1, circle_weight=0.8
+        coverage_weight=0.05, circle_weight=1
     )
 
     print(f"\nOptimization Results:")
