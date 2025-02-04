@@ -1,20 +1,12 @@
 #  2 møte, 04.02.2025 INF219
 **Tilstede:** Thone, Hanna, Håvard, Jakob
 
-**Team lead:** Thone Støa
-**Teck lead:** Håvard Lunde
-**Testansvarlig:** Herman Walaunet
-**Todolist ansvarlig:** Hanna Søndane
-
 **Neste møte:** Torsdag 6 februar, 14:00 - 16:00
 
 
 ### Hva er OPPGAVEN / MÅL:
 * Plassere flest mulige sirkler på et rom/areal uten overlapp. (sirkler = lys).
 
-
-#### Eksempel på hva som kan være alternativ løsning:
-* 
 
 ### Hva vi har gjort på møtet:
 * Jakob har gått gjennom koden sin til MVP.
@@ -23,8 +15,7 @@
 
 ### Hva vi har fått til siden sist:
 * Laget MVP, og brukt ikke faste variabler.
-* Brukt PUPL. 
-
+* Brukt PUPL (solver). 
 
 ### Tentativ plan:
 * Dele opp oppgaver etter torsdagsmøtet
