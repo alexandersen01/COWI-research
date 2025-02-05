@@ -26,7 +26,7 @@ Where:
 - $w_1$ is the area coverage weight
 - $w_2$ is the circle weight
 
-Together they maximize covered area while minimise the amount of circles used
+Together they maximize covered area while they minimise the amount of circles used
 
 s.t.
 
@@ -39,22 +39,29 @@ $$
 Binary variables: 
 
 $$
-a_{ijkl} = 
+x_{ij}=
 \begin{cases}
-1\quad\text{if a circle at ($ij$) can cover cell ($kj$)}\\
+1\quad\text{if a circle is placed at grid point }(x,y)\\
 0\quad\text{otherwise}
 \end{cases}
 $$
 
-OR
+$$
+y_{kl}=
+\begin{cases}
+1\quad\text{if a cell at $(k,l)$ is covered}\\
+0\quad\text{otherwise}
+\end{cases}
+$$
 
 $$
 a_{ijkl} = 
 \begin{cases}
+1\quad\text{if a circle at ($ij$) can cover cell ($kj$)}\\
 1\quad\text{if }(i-k)^2 + (j-l)^2 \leq (r + \frac{s}{2})^2\\
 0\quad\text{otherwise}
 \end{cases}
 $$
 
-This ensures that a cell can only be marked as covered if at least one circle covers it ($y_{kl} = 1$)
 
+This ensures that a cell can only be marked as covered if at least one circle covers it ($y_{kl} = 1$)
