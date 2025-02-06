@@ -185,11 +185,9 @@ class CircleCoverageSolver:
         bounds = self.room.bounds
         plt.xlim(bounds[0] - 1, bounds[2] + 1)
         plt.ylim(bounds[1] - 1, bounds[3] + 1)
-
         plt.show()
 
 
-# Example usage
 if __name__ == "__main__":
     # simple L-shaped room
     room_vertices = [(0, 0), (10, 0), (10, 5), (5, 5), (5, 10), (0, 10)]
@@ -209,3 +207,5 @@ if __name__ == "__main__":
     print(f"Room area: {solver.room_area:.2f} square units")
 
     solver.visualize(circles, cells, covered_area, coverage_percentage)
+
+
