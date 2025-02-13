@@ -1,5 +1,13 @@
 ## How to use:
 
+#### TODO: refactor obj func to:
+
+$$
+\begin{align}
+\max z= \text{area} \geq w_1 \sum_{kl}y_{kl} - w_2\sum_{ij}x_{ij}
+\end{align}
+$$
+
 This program uses the `pulp` package – which is open source😁
 
 The user can adjust the following params: 

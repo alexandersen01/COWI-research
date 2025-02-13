@@ -197,7 +197,7 @@ if __name__ == "__main__":
     )
 
     circles, cells, covered_area, coverage_percentage = solver.solve(
-        coverage_weight=0.05, circle_weight=1
+        coverage_weight=0.5, circle_weight=0.50
     )
 
     print(f"\nOptimization Results:")
@@ -207,5 +207,3 @@ if __name__ == "__main__":
     print(f"Room area: {solver.room_area:.2f} square units")
 
     solver.visualize(circles, cells, covered_area, coverage_percentage)
-
-
