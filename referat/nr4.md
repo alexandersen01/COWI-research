@@ -44,6 +44,6 @@ Håvard, Hanna og
 
 
 ### Mål til neste møte:
-
+* Jobbe videre på deloppgavene i de to gruppene som vi har delt opp i. 
 
 
