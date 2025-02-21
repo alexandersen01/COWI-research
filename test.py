@@ -6,19 +6,24 @@ from shapely.ops import unary_union
 from math import log
 from matplotlib.colors import LinearSegmentedColormap
 
+
 class GradientCircleCoverageSolver:
-    def __init__(self, room_vertices, grid_size=1.0, circle_radius=1.0, area_cell_size=0.1):
+    def __init__(
+        self, room_vertices, grid_size=1.0, circle_radius=1.0, area_cell_size=0.1
+    ):
         self.room = Polygon(room_vertices)
         self.grid_size = grid_size
         self.circle_radius = circle_radius
         self.area_cell_size = area_cell_size
         self.room_area = self.room.area
-        
+
         # Create custom colormap from green to blue with more intermediate colors
-        colors = [(0, 0, 1, 0.1),      # blue (lowest)
-                 (0, 0.5, 0.5, 0.4),   # blue-green (low)
-                 (0, 0.8, 0.2, 0.7),   # mostly green (medium)
-                 (0, 1, 0, 1)]         # pure green (high)
+        colors = [
+            (0, 0, 1, 0.1),  # blue (lowest)
+            (0, 0.5, 0.5, 0.4),  # blue-green (low)
+            (0, 0.8, 0.2, 0.7),  # mostly green (medium)
+            (0, 1, 0, 1),
+        ]  # pure green (high)
         self.gradient_cmap = LinearSegmentedColormap.from_list("custom", colors)
 
     def generate_grid_points(self):
@@ -60,28 +65,29 @@ class GradientCircleCoverageSolver:
         dx = circle_center[0] - cell_center[0]
         dy = circle_center[1] - cell_center[1]
         distance = np.sqrt(dx * dx + dy * dy)
-        
+
         if distance <= self.circle_radius:
             normalized_distance = distance / self.circle_radius
             return 1 / (1 + 2 * normalized_distance)
-            
+
         return 0
 
     def get_cells_in_grid_cell(self, grid_x, grid_y, area_cells):
         """Get all small area cells that fall within a given grid cell."""
-        min_x = grid_x - self.grid_size/2
-        max_x = grid_x + self.grid_size/2
-        min_y = grid_y - self.grid_size/2
-        max_y = grid_y + self.grid_size/2
-        
-        return [(x, y) for x, y in area_cells 
-                if min_x <= x < max_x and min_y <= y < max_y]
+        min_x = grid_x - self.grid_size / 2
+        max_x = grid_x + self.grid_size / 2
+        min_y = grid_y - self.grid_size / 2
+        max_y = grid_y + self.grid_size / 2
+
+        return [
+            (x, y) for x, y in area_cells if min_x <= x < max_x and min_y <= y < max_y
+        ]
 
     def solve(self, min_light_level=0.2):
         """
         Solve the optimization problem to minimize number of circles while maintaining
         minimum average coverage in each grid cell.
-        
+
         Args:
             min_light_level (float): Minimum average light level required in each grid cell (default: 0.2)
         """
@@ -107,24 +113,32 @@ class GradientCircleCoverageSolver:
         for cell_x, cell_y in area_cells:
             covering_circles = []
             for grid_x, grid_y in grid_points:
-                coverage_value = self.get_coverage_value((grid_x, grid_y), (cell_x, cell_y))
+                coverage_value = self.get_coverage_value(
+                    (grid_x, grid_y), (cell_x, cell_y)
+                )
                 if coverage_value > 0:
-                    covering_circles.append(coverage_value * circle_vars[grid_x, grid_y])
-            
+                    covering_circles.append(
+                        coverage_value * circle_vars[grid_x, grid_y]
+                    )
+
             prob += cell_vars[cell_x, cell_y] == pulp.lpSum(covering_circles)
 
         # Add minimum average constraint for each grid cell using the parameter
         for grid_x, grid_y in grid_points:
             grid_cells = self.get_cells_in_grid_cell(grid_x, grid_y, area_cells)
             if grid_cells:  # Only add constraint if grid cell has area cells
-                prob += pulp.lpSum(cell_vars[x, y] for x, y in grid_cells) >= min_light_level * len(grid_cells)
+                prob += pulp.lpSum(
+                    cell_vars[x, y] for x, y in grid_cells
+                ) >= min_light_level * len(grid_cells)
 
         status = prob.solve()
         print(f"Solver status: {pulp.LpStatus[status]}")
-        
+
         if status != 1:  # If not optimal
             print("Warning: Solver did not find an optimal solution.")
-            print(f"Try adjusting the minimum light requirement (currently {min_light_level}) or grid/circle parameters.")
+            print(
+                f"Try adjusting the minimum light requirement (currently {min_light_level}) or grid/circle parameters."
+            )
 
         # Extract results
         selected_circles = []
@@ -138,15 +152,17 @@ class GradientCircleCoverageSolver:
         for grid_x, grid_y in grid_points:
             grid_cells = self.get_cells_in_grid_cell(grid_x, grid_y, area_cells)
             grid_total = 0
-            
+
             for cell_x, cell_y in grid_cells:
                 cell_total = 0
                 for circle_x, circle_y in selected_circles:
-                    coverage = self.get_coverage_value((circle_x, circle_y), (cell_x, cell_y))
+                    coverage = self.get_coverage_value(
+                        (circle_x, circle_y), (cell_x, cell_y)
+                    )
                     cell_total += coverage
                 cell_coverage[(cell_x, cell_y)] = cell_total
                 grid_total += cell_total
-            
+
             if grid_cells:
                 grid_avg = grid_total / len(grid_cells)
                 grid_averages[(grid_x, grid_y)] = grid_avg
@@ -166,7 +182,7 @@ class GradientCircleCoverageSolver:
         max_coverage = max(cell_coverage.values()) if cell_coverage else 1.0
         if max_coverage == 0:
             max_coverage = 1.0
-            
+
         for (x, y), coverage in cell_coverage.items():
             normalized_coverage = coverage / max_coverage
             rect = plt.Rectangle(
@@ -174,7 +190,7 @@ class GradientCircleCoverageSolver:
                 self.area_cell_size,
                 self.area_cell_size,
                 color=self.gradient_cmap(normalized_coverage),
-                alpha=0.8
+                alpha=0.8,
             )
             ax.add_patch(rect)
 
@@ -182,13 +198,13 @@ class GradientCircleCoverageSolver:
         grid_points = self.generate_grid_points()
         for x, y in grid_points:
             rect = plt.Rectangle(
-                (x - self.grid_size/2, y - self.grid_size/2),
+                (x - self.grid_size / 2, y - self.grid_size / 2),
                 self.grid_size,
                 self.grid_size,
                 fill=False,
-                color='gray',
-                linestyle='--',
-                alpha=0.5
+                color="gray",
+                linestyle="--",
+                alpha=0.5,
             )
             ax.add_patch(rect)
 
@@ -227,9 +243,10 @@ class GradientCircleCoverageSolver:
         # Add colorbar
         sm = plt.cm.ScalarMappable(cmap=self.gradient_cmap)
         sm.set_array([])
-        plt.colorbar(sm, ax=ax, label='Coverage Intensity')
-        
+        plt.colorbar(sm, ax=ax, label="Coverage Intensity")
+
         plt.show()
+
 
 if __name__ == "__main__":
     # Simple L-shaped room
@@ -240,7 +257,7 @@ if __name__ == "__main__":
     )
 
     # Now you can specify different minimum light levels
-    circles, cell_coverage = solver.solve(min_light_level=0.8)  
+    circles, cell_coverage = solver.solve(min_light_level=0.8)
 
     print(f"\nOptimization Results:")
     print(f"Number of circles: {len(circles)}")

@@ -1,5 +1,8 @@
 ## How to use:
 
+### TODO: introduce symmetry:
+- We should try to introduce symmetry by adding a constraint that implies $\text{all circles must have equal angles and distances to each other}$.
+
 This program uses the `pulp` package – which is open source😁
 
 It will figure out the minimum amount of circles/lights (mentioned in the objective function) needed to illuminate a room, and where to place them.
@@ -38,7 +41,7 @@ x_{ij} = \begin{cases}
 1 \quad\text{if a circle is placed at grid point } {i,j}\\
 0 \quad\text{otherwise}
 \end{cases}\\
-y_{kl} = \text{coverage value at area cell (lux) } (k,l)
+y_{kl} = \text{coverage value (lux) at area cell } (k,l)
 \end{align}
 $$
 
