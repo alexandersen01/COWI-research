@@ -14,7 +14,7 @@ Planlagt hvordan vi skal fortsette oppgaven.
 
 #### Mulig deloppgaver:
 Thone, Jakob og 
-* Skal kan ordne **gradient på lys 100% - 20%.**
+* ✅ Skal kan ordne **gradient på lys 100% - 20%.**
     **Mulig løsninger:**
         - Ha en mengde sirkler i sirkelen, men ulik gradient. Ta hensyn til lux. 
         - se på Glomox lyskurve
