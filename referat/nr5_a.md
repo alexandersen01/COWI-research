@@ -15,7 +15,7 @@
 
 
 #### Deloppgaven vi har fullført:
-Thone, Jakob og 
+Thone, Jakob og Hermann
 * ✅ Skal kan ordne **gradient på lys 100% - 20%.**
     **Mulig løsninger:**
         - Ha en mengde sirkler i sirkelen, men ulik gradient. Ta hensyn til lux. 
