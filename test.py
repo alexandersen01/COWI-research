@@ -38,7 +38,7 @@ class GradientCircleCoverageSolver:
         for x in x_coords:
             for y in y_coords:
                 point = Point(x, y)
-                if self.room.contains(point):
+                if self.room.intersects(point):
                     grid_points.append((x, y))
 
         return grid_points
@@ -130,6 +130,9 @@ class GradientCircleCoverageSolver:
                 prob += pulp.lpSum(
                     cell_vars[x, y] for x, y in grid_cells
                 ) >= min_light_level * len(grid_cells)
+                # prob += pulp.lpSum(
+                #     cell_vars[x, y] for x, y in grid_cells
+                # ) <= max_light_level * len(grid_cells)
 
         status = prob.solve()
         print(f"Solver status: {pulp.LpStatus[status]}")
