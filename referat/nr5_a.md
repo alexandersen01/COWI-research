@@ -1,4 +1,4 @@
-#  4 møte, 27.02.2025 klokken: 10:15 - 12:00 INF219
+#  5_a møte, 27.02.2025 klokken: 10:15 - 12:00 INF219
 **Tilstede:** Thone, Jakob
 
 **Neste møte:** 27 februar 14:15

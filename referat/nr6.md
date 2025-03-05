@@ -1,7 +1,7 @@
-#  5_b møte, 27.02.2025 klokken: 14:15 - 16:00 INF219
-**Tilstede:** Thone, Hanna, Håvard, Jakob
+#  6 møte, 05.03.2025 INF219
+**Tilstede:** Thone, Hanna, Håvard, Jakob, Hermann
 
-**Neste møte:** 5 mars 2025 15:15
+**Neste møte:** 6 mars 2025 14:00 med COWI
 
 
 ### Hva er OPPGAVEN / MÅL:
@@ -9,9 +9,10 @@
 * Passe på at lysene har symetri.
 
 ### Hva vi har gjort på møtet:
-* Funnet ut hvordan gruppene ligger ann med deloppgavene
-
-* Jobbet sammen med å finne ut hvordan man skal løse andre deloppgave (matematisk løsning på pent mønster).
+* Hatt god diskusjon om hvordan vi skal få løst deloppgavene våres på best mulig måte.
+    * Funnet ut at det ikke er vits i ha å 'MAX' constraint på lys, men det er vits i å ha en 'MINIMUM'
+    * Endret gradient funksjonen, slik at lysene lyser litt sterkere på et større området. 
+    * Vi har tidligere kuttet av lyset for tidlig, og hvis vi ikke gjør det så kan vi bruke færre lys.
 
 
 #### Deloppgaver:
@@ -37,6 +38,15 @@ Håvard og Hanna:
 * Legge til en constraint 'MAX' på lys. (Vi har allerede en min)
     * Kan ha en average på LUX.
 
+* Mønster, mulige løsninger:
+    * Hvis en radius av ett lys går fra vegg til vegg, så plasserer man ett lys i sentrum.
+    * Hvis avstanden fra vegg til vegg er større, så kan man plassere flere lys i arealet. 
+
+    Spørsmål til oss:
+        * Får lyset ett fint mønster ut ifra gradient funksjonen?
+
+* Legge til 60 x 60 rutene for å se direkte hvor lyset blir plassert, for så å ha en gradient sirkel/firkant som viser hvor det blir opplyst.
+
 ##### Ekstra deloppgave vi kan ta opp med COWI på møte 6 mars.
 * Gjør modellen kompatibel med andre type lys.
 
@@ -50,6 +60,12 @@ Håvard og Hanna:
 
 
 ### Mål til neste møte:
-* Jobbe videre på deloppgave 24
 
 
+### Spørsmål til COWI:
+* Hvor viktig er mønster?
+* Hva blir et optimalt mønster?
+* Vi vil ha konkret definisjon på symetri som vi kan følge.
+* Hvor mye computationaly expensive/resurskrevende kan koden være? (Dette er vell noe en masteroppgave kan bygge videre på)
+
+* Hva skal vi så fokusere på/hvordan kan vi bygge videre?

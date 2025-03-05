@@ -1,4 +1,4 @@
-#  3 møte, 06.02.2025 INF219
+#  3 møte med COWI, 06.02.2025 INF219
 **Tilstede:** Thone, Hanna, Håvard, Jakob, Adrian, Hermann, Kyrre, Sverre, Dag
 
 **Neste møte:** Starten av uke 7 , neste møte med COWI 6 mars 14:00 - 16:00.
