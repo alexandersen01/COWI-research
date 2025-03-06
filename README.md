@@ -2,8 +2,11 @@
 
 ### TODO: Convert circle radius into a function of gradient function (cutoff point)
 
+### TODO: Cells touching walls have a lower minimum lux than other cells
+
 ### TODO: introduce symmetry:
-- We should try to introduce symmetry by adding a constraint that implies $\text{all circles must have equal angles and distances to each other}$.
+- We should try to introduce symmetry by adding a constraint that implies equal distance between light in $\textit{either direction}$.
+    - Test either directions
 
 This program uses the `pulp` package – which is open source😁
 
