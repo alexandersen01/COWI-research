@@ -1,6 +1,6 @@
 ## How to use:
 
-### TODO: Add cap to $L_{min}$ constraint
+### TODO: Convert circle radius into a function of gradient function (cutoff point)
 
 ### TODO: introduce symmetry:
 - We should try to introduce symmetry by adding a constraint that implies $\text{all circles must have equal angles and distances to each other}$.
