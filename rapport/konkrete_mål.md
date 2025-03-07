@@ -1,15 +1,16 @@
 # Konkrete mål for taktetris
 
-### 1 Få et strukturert mønster
+### 1. Få et strukturert mønster
 
 > **Mulige løsninger:**
 > * Innføre en alternativ metode som starter med mønster og optimaliserer etter det. 
 
 
-### 2 Innføre margin fra vegg, hvor det ikke er så nøye å ha mye lys.
+### 2. Innføre margin fra vegg, hvor det ikke er så nøye å ha mye lys.
 
 
-### 3 Få inn et brukergrensesnitt/GUI.
+
+### 3. Få inn et brukergrensesnitt/GUI.
 
 > **Tanker:**
 > * Kordinatene til lysene skal sendes til GUI.
