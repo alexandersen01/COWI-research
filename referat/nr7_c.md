@@ -1,5 +1,5 @@
 #  7 møte, 06.03.2025 INF219
-**Tilstede:** Thone, Hanna, Håvard, Jakob, Hermann, Frederik Tegnader
+**Tilstede:** Thone, Hanna, Håvard, Jakob, Hermann, Frederik Tegnader, Kyrre, Sverre, Dag
 
 **Neste møte:** Nytt møte med COWI 4 april 14:00 - 15:30
 
