@@ -1,7 +1,7 @@
 #  8 møte, 07.03.2025 
 **Tilstede:** Thone, Hanna, Hermann, Håvard
 
-**Neste møte:** 
+**Neste møte:** Nytt møte med COWI 4 april 14:00 - 15:3
 
 # Tentativ plan:
 Være i mål innen 12 april.
@@ -36,8 +36,11 @@ Være i mål innen 12 april.
 Thone:
 * Ordne brukergrensesnitt/GUI
 
-Hanna, Hermann:
+Hanna, Hermann, Håvard:
 * Struktur og mønster
 
-Håvard
+Jakob:
+* Refakrutere koden, innføre MVC.
+* Innføre margin fra vegg.
+
 
