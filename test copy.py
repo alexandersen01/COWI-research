@@ -259,7 +259,6 @@ if __name__ == "__main__":
     solver = GradientCircleCoverageSolver(
         room_vertices, grid_size=1, circle_radius=2, area_cell_size=0.2
     )
-    
     MIN_LUX = 300
     LAMP_LUX = 318
     MIN_AVG_LUX = MIN_LUX / LAMP_LUX
