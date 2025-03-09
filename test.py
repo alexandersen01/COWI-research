@@ -68,7 +68,7 @@ class GradientCircleCoverageSolver:
 
         if distance <= self.circle_radius:
             normalized_distance = distance / self.circle_radius
-            return 1 / (1 + 0.8 * normalized_distance)
+            return 1 / (1 + 3 * normalized_distance)
 
         return 0
 
@@ -253,11 +253,11 @@ class GradientCircleCoverageSolver:
 
 if __name__ == "__main__":
     # Simple L-shaped room
-    # room_vertices = [(0, 0), (10, 0), (10, 5), (5, 5), (5, 10), (0, 10)]
-    room_vertices = [(0, 0), (0, 10), (10, 10), (10, 0)]
+    room_vertices = [(0, 0), (10, 0), (10, 5), (5, 5), (5, 10), (0, 10)]
+    # room_vertices = [(0, 0), (0, 10), (10, 10), (10, 0)]
 
     solver = GradientCircleCoverageSolver(
-        room_vertices, grid_size=1, circle_radius=2, area_cell_size=0.2
+        room_vertices, grid_size=1, circle_radius=4, area_cell_size=0.1
     )
     MIN_LUX = 300
     LAMP_LUX = 318
