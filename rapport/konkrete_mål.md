@@ -7,6 +7,7 @@
 
 
 ### 2. Innføre margin fra vegg, hvor det ikke er så nøye å ha mye lys.
+> * How to: gi celler 1 enhet fra veggen x% min required avg lux
 
 
 
@@ -17,8 +18,10 @@
 > * Lysene skal kun være mulig å flytte på fra plate til plate innenfor et rom.
 > * Skal ikke være mulig å plassere lys på opptatte plater, eller utenfor rommet.
 > * Inkludere gradient i GUI.
+> * Kan hostes på e.g. flask 
 
 
 
 ## Mål vi har lyst til å gjennomføre:
 * La programmet kjøre en sekvens.
+* Kjør hele greia på flask (burde ikke være for mye ork, trenger bare nok compute for å regne ut)
