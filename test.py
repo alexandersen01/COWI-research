@@ -213,10 +213,14 @@ class GradientCircleCoverageSolver:
 
         # Plot circles
         for x, y in circles:
+            # Add the circle outline
             circle = plt.Circle(
                 (x, y), self.circle_radius, fill=False, color="red", alpha=0.5
             )
             ax.add_patch(circle)
+            
+            # Add a red dot at the center of each circle
+            plt.plot(x, y, 'ro', markersize=6)
 
         # Add metrics text
         metrics_text = (
@@ -257,9 +261,9 @@ if __name__ == "__main__":
     # room_vertices = [(0, 0), (0, 10), (10, 10), (10, 0)]
 
     solver = GradientCircleCoverageSolver(
-        room_vertices, grid_size=1, circle_radius=4, area_cell_size=0.1
+        room_vertices, grid_size=1, circle_radius=4, area_cell_size=0.2
     )
-    
+
     MIN_LUX = 300
     LAMP_LUX = 318
     MIN_AVG_LUX = MIN_LUX / LAMP_LUX
