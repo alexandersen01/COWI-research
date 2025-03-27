@@ -68,7 +68,7 @@ class GradientCircleCoverageSolver:
 
         if distance <= self.circle_radius:
             normalized_distance = distance / self.circle_radius
-            return 1 / (1 + 0.8 * normalized_distance)
+            return 1 / (1 + 3 * normalized_distance)
 
         return 0
 
@@ -213,10 +213,14 @@ class GradientCircleCoverageSolver:
 
         # Plot circles
         for x, y in circles:
+            # Add the circle outline
             circle = plt.Circle(
                 (x, y), self.circle_radius, fill=False, color="red", alpha=0.5
             )
             ax.add_patch(circle)
+            
+            # Add a red dot at the center of each circle
+            plt.plot(x, y, 'ro', markersize=6)
 
         # Add metrics text
         metrics_text = (
@@ -253,13 +257,13 @@ class GradientCircleCoverageSolver:
 
 if __name__ == "__main__":
     # Simple L-shaped room
-    # room_vertices = [(0, 0), (10, 0), (10, 5), (5, 5), (5, 10), (0, 10)]
-    room_vertices = [(0, 0), (0, 10), (10, 10), (10, 0)]
+    room_vertices = [(0, 0), (10, 0), (10, 5), (5, 5), (5, 10), (0, 10)]
+    # room_vertices = [(0, 0), (0, 10), (10, 10), (10, 0)]
 
     solver = GradientCircleCoverageSolver(
-        room_vertices, grid_size=1, circle_radius=2, area_cell_size=0.2
+        room_vertices, grid_size=1, circle_radius=4, area_cell_size=0.2
     )
-    
+
     MIN_LUX = 300
     LAMP_LUX = 318
     MIN_AVG_LUX = MIN_LUX / LAMP_LUX
