@@ -94,3 +94,11 @@ x_{ij} &\in \set{0, 1} \quad\forall (i,j) \in G \\
 y_{kl} &\geq 0 \quad\forall (k,l) \in A
 \end{align}
 $$
+
+Suggested improvement in place of $(12)$:
+
+$$
+\begin{align}
+y_{kl} \geq L_{\text{min}} \quad\forall (k, l) \in A
+\end{align}
+$$

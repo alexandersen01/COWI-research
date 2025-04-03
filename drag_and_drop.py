@@ -91,61 +91,59 @@ class GradientCircleCoverageSolver:
                                  color=self.gradient_cmap(coverage / max_coverage), alpha=0.8)
             ax.add_patch(rect)
 
-        # Grid points
-        for x, y in self.generate_grid_points():
-            rect = plt.Rectangle((x - self.grid_size / 2, y - self.grid_size / 2), self.grid_size, self.grid_size,
-                                 fill=False, color="gray", linestyle="--", alpha=0.5)
-            ax.add_patch(rect)
-
         # Circles
         for x, y in circles:
             ax.add_patch(plt.Circle((x, y), self.circle_radius, fill=False, color="red", alpha=0.5))
-            ax.plot(x, y, 'ro', markersize=6)
+            ax.plot(x, y, 'ro', markersize=6, picker=True)
 
         ax.set_aspect("equal")
         ax.set_title("Gradient Coverage Optimization Results")
         ax.legend()
-
 
 class CoverageGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Circle Coverage Optimization")
 
-        # Solver setup
         self.room_vertices = [(0, 0), (10, 0), (10, 5), (5, 10), (0, 10)]
         self.solver = GradientCircleCoverageSolver(self.room_vertices, grid_size=1, circle_radius=4, area_cell_size=0.2)
 
-        # Buttons
+        self.selected_circles = []
+
         self.btn_optimal = ttk.Button(root, text="Show Optimal Placement", command=self.show_optimal)
         self.btn_optimal.pack(pady=5)
 
         self.btn_pattern = ttk.Button(root, text="Show Pattern Placement", command=self.show_pattern)
         self.btn_pattern.pack(pady=5)
 
-        # Matplotlib figure
         self.fig, self.ax = plt.subplots(figsize=(6, 6))
         self.canvas = FigureCanvasTkAgg(self.fig, master=root)
         self.canvas.get_tk_widget().pack()
+        self.canvas.mpl_connect("pick_event", self.on_pick)
 
     def show_optimal(self):
-        """Show optimal placement visualization."""
         MIN_LUX = 300
         LAMP_LUX = 318
         MIN_AVG_LUX = MIN_LUX / LAMP_LUX
 
-        circles, cell_coverage = self.solver.solve(min_light_level=MIN_AVG_LUX)
-        self.solver.visualize(circles, cell_coverage, self.ax)
+        self.selected_circles, cell_coverage = self.solver.solve(min_light_level=MIN_AVG_LUX)
+        self.solver.visualize(self.selected_circles, cell_coverage, self.ax)
         self.canvas.draw()
 
     def show_pattern(self):
-        """Show predefined pattern placement visualization."""
-        pattern_circles = [(x, y) for x in range(2, 40, 3) for y in range(2, 50, 3) if self.solver.room.contains(Point(x, y))]
-        cell_coverage = {}
-
-        self.solver.visualize(pattern_circles, cell_coverage, self.ax)
+        self.selected_circles = [(x, y) for x in range(2, 10, 3) for y in range(2, 10, 3) if self.solver.room.contains(Point(x, y))]
+        self.solver.visualize(self.selected_circles, {}, self.ax)
         self.canvas.draw()
 
+    def on_pick(self, event):
+        if event.artist not in self.ax.patches:
+            return
+        circle = event.artist.center
+        self.selected_circles.remove(circle)
+        new_x, new_y = event.mouseevent.xdata, event.mouseevent.ydata
+        self.selected_circles.append((new_x, new_y))
+        self.solver.visualize(self.selected_circles, {}, self.ax)
+        self.canvas.draw()
 
 if __name__ == "__main__":
     root = tk.Tk()
