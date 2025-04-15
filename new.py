@@ -32,29 +32,40 @@ class GridPlacementSolver:
             (0, 1, 0, 1),
         ]  # pure green (high)
         self.gradient_cmap = LinearSegmentedColormap.from_list("custom", colors)
-        
-    def generate_grid_placement(self):
-        """Generate circle placements in a grid pattern with specified spacing from walls."""
+    
+    def generate_grid_points(self):
+        """Generate valid grid points within the room."""
         bounds = self.room.bounds
         x_min, y_min, x_max, y_max = bounds
-        
-        # Calculate starting positions (wall_distance away from boundaries)
-        x_start = x_min + self.wall_distance
-        y_start = y_min + self.wall_distance
-        
-        # Calculate grid points
-        x_positions = np.arange(x_start, x_max, self.horizontal_spacing)
-        y_positions = np.arange(y_start, y_max, self.vertical_spacing)
-        
-        # Generate all possible combinations of x and y
-        circle_candidates = []
-        for x in x_positions:
-            for y in y_positions:
+
+        x_coords = np.arange(x_min, x_max + self.grid_size, self.grid_size)
+        y_coords = np.arange(y_min, y_max + self.grid_size, self.grid_size)
+
+        grid_points = []
+        for x in x_coords:
+            for y in y_coords:
                 point = Point(x, y)
                 if self.room.contains(point):
-                    circle_candidates.append((x, y))
-        
-        return circle_candidates
+                    grid_points.append((x, y))
+
+        return grid_points
+
+    def generate_area_cells(self):
+        """Generate cells for tracking area coverage."""
+        bounds = self.room.bounds
+        x_min, y_min, x_max, y_max = bounds
+
+        x_coords = np.arange(x_min, x_max + self.area_cell_size, self.area_cell_size)
+        y_coords = np.arange(y_min, y_max + self.area_cell_size, self.area_cell_size)
+
+        cells = []
+        for x in x_coords:
+            for y in y_coords:
+                point = Point(x, y)
+                if self.room.contains(point):
+                    cells.append((x, y))
+
+        return cells
     
     def get_coverage_value(self, circle_center, point):
         """Calculate gradient coverage value based on distance from circle center."""
@@ -484,7 +495,7 @@ else:  # Custom
     st.sidebar.text("Enter vertices as x,y pairs (one per line):")
     custom_vertices = st.sidebar.text_area(
         "Format: x,y",
-        "0,0\n10,0\n10,5\n5,10\n0,10"
+        "0,0\n10,0\n10,5\n5,5\n5,10\n0,10"
     )
     try:
         room_vertices = [tuple(map(float, line.split(','))) for line in custom_vertices.strip().split('\n')]
@@ -495,6 +506,7 @@ else:  # Custom
 # Add min_circle_spacing parameter to sidebar for Optimization Model
 if solution_approach == "Optimization Model":
     st.sidebar.header("Optimization Parameters")
+    grid_size = st.sidebar.slider("Grid Size", 0.5, 2.0, 1.0, 0.1)
     circle_radius = st.sidebar.slider("Circle Radius", 0.5, 3.0, 1.5, 0.1)
     area_cell_size = st.sidebar.slider("Area Cell Size", 0.1, 0.5, 0.2, 0.05)
     min_light_level = st.sidebar.slider("Minimum Light Level", 0.1, 1.0, 0.3, 0.05)
@@ -510,7 +522,8 @@ else:  # Grid Placement Model
 # Initialize solvers based on selected approach
 if solution_approach == "Optimization Model":
     solver = GradientCircleCoverageSolver(
-        room_vertices,  
+        room_vertices, 
+        grid_size=grid_size, 
         circle_radius=circle_radius, 
         area_cell_size=area_cell_size
     )
@@ -673,11 +686,6 @@ if solution_approach == "Optimization Model":
     - **Area Cell Size**: Granularity for measuring coverage (smaller = more accurate but slower)
     - **Minimum Light Level**: Required average light intensity in each grid cell
     - **Minimum Circle Spacing**: Controls how far apart circles must be placed (in grid cells)
-                
-    ## Model Constraints:
-    1. Each grid cell must have a minimum average light level.
-    2. Circles cannot be placed too close to each other (based on the minimum circle spacing).
-    3. Circles must be placed within the room boundaries.
     """)
 else:  # Grid Placement Model
     st.markdown("""
