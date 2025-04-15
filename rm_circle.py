@@ -6,21 +6,200 @@ import matplotlib.pyplot as plt
 from shapely.ops import unary_union
 from math import log
 from matplotlib.colors import LinearSegmentedColormap
-# Set up the page
-st.set_page_config(page_title="Circle Coverage Optimizer", layout="wide")
-st.title("Gradient Circle Coverage Optimization")
-st.write("Optimize the placement of circles to provide gradient coverage in a room.")
 
+# Set up the page
+st.set_page_config(page_title="Light Coverage Optimizer", layout="wide")
+st.title("Gradient Light Coverage Optimization")
+st.write("Optimize the placement of lights to provide gradient coverage in a room.")
+
+# === Simple Light Placement Model ===
+
+
+class GridPlacementSolver:
+    def __init__(
+        self,
+        room_vertices,
+        wall_distance=1.2,
+        horizontal_spacing=2.5,
+        vertical_spacing=2.5,
+    ):
+        self.room = Polygon(room_vertices)
+        self.wall_distance = wall_distance
+        self.horizontal_spacing = horizontal_spacing
+        self.vertical_spacing = vertical_spacing
+        self.room_area = self.room.area
+
+        # Create custom colormap from green to blue with more intermediate colors
+        colors = [
+            (0, 0, 1, 0.1),  # blue (lowest)
+            (0, 0.5, 0.5, 0.4),  # blue-green (low)
+            (0, 0.8, 0.2, 0.7),  # mostly green (medium)
+            (0, 1, 0, 1),
+        ]  # pure green (high)
+        self.gradient_cmap = LinearSegmentedColormap.from_list("custom", colors)
+
+    def generate_grid_placement(self):
+        """Generate light placements in a grid pattern with specified spacing from walls."""
+        bounds = self.room.bounds
+        x_min, y_min, x_max, y_max = bounds
+
+        # Calculate starting positions (wall_distance away from boundaries)
+        x_start = x_min + self.wall_distance
+        y_start = y_min + self.wall_distance
+
+        # Calculate grid points
+        x_positions = np.arange(x_start, x_max, self.horizontal_spacing)
+        y_positions = np.arange(y_start, y_max, self.vertical_spacing)
+
+        # Generate all possible combinations of x and y
+        light_candidates = []
+        for x in x_positions:
+            for y in y_positions:
+                point = Point(x, y)
+                if self.room.contains(point):
+                    light_candidates.append((x, y))
+
+        return light_candidates
+
+    def get_coverage_value(self, light_center, point):
+        """Calculate gradient coverage value based on distance from light center."""
+        dx = light_center[0] - point[0]
+        dy = light_center[1] - point[1]
+        distance = np.sqrt(dx * dx + dy * dy)
+
+        # Inverse square law with a small epsilon to avoid division by zero
+        if distance == 0:
+            return 1
+
+        return 1 / (1 + distance**2)
+
+    def calculate_coverage(self, lights):
+        """Calculate the coverage for a set of lights using a fine grid."""
+        # Generate a fine grid of points to evaluate coverage
+        bounds = self.room.bounds
+        x_min, y_min, x_max, y_max = bounds
+        step = min(self.horizontal_spacing, self.vertical_spacing) / 10  # Fine grid
+
+        x_coords = np.arange(x_min, x_max + step, step)
+        y_coords = np.arange(y_min, y_max + step, step)
+
+        cell_coverage = {}
+        for x in x_coords:
+            for y in y_coords:
+                point = Point(x, y)
+                if self.room.contains(point):
+                    # Calculate total coverage at this point
+                    total_coverage = 0
+                    for light_x, light_y in lights:
+                        coverage = self.get_coverage_value((light_x, light_y), (x, y))
+                        total_coverage += coverage
+
+                    cell_coverage[(x, y)] = total_coverage
+
+        return cell_coverage
+
+    def solve(self):
+        """Generate a grid-based placement of lights."""
+        lights = self.generate_grid_placement()
+        cell_coverage = self.calculate_coverage(lights)
+
+        return lights, cell_coverage
+
+    def visualize(self, lights, cell_coverage):
+        """Visualize the solution with gradient coverage."""
+        fig, ax = plt.subplots(figsize=(10, 8))
+
+        # Plot room boundary
+        room_x, room_y = self.room.exterior.xy
+        ax.plot(room_x, room_y, "k-", label="Room boundary")
+
+        # Plot gradient coverage
+        max_coverage = max(cell_coverage.values()) if cell_coverage else 1.0
+        if max_coverage == 0:
+            max_coverage = 1.0
+
+        # Determine cell size for visualization
+        bounds = self.room.bounds
+        x_min, y_min, x_max, y_max = bounds
+        cell_size = min(self.horizontal_spacing, self.vertical_spacing) / 10
+
+        for (x, y), coverage in cell_coverage.items():
+            normalized_coverage = coverage / max_coverage
+            rect = plt.Rectangle(
+                (x - cell_size / 2, y - cell_size / 2),
+                cell_size,
+                cell_size,
+                color=self.gradient_cmap(normalized_coverage),
+                alpha=0.8,
+            )
+            ax.add_patch(rect)
+
+        # Plot grid lines
+        x_positions = np.arange(
+            x_min + self.wall_distance, x_max, self.horizontal_spacing
+        )
+        y_positions = np.arange(
+            y_min + self.wall_distance, y_max, self.vertical_spacing
+        )
+
+        for x in x_positions:
+            plt.axvline(x, color="gray", linestyle="--", alpha=0.3)
+        for y in y_positions:
+            plt.axhline(y, color="gray", linestyle="--", alpha=0.3)
+
+        # Plot lights
+        for x, y in lights:
+            # Add a smaller circle at the center for better visibility
+            light = plt.Circle((x, y), 0.1, fill=True, color="red")
+            ax.add_patch(light)
+
+        # Add metrics text
+        metrics_text = (
+            f"Room Area: {self.room_area:.2f} sq units\n"
+            f"Number of Lights: {len(lights)}\n"
+            f"Wall Distance: {self.wall_distance}\n"
+            f"Horizontal Spacing: {self.horizontal_spacing}\n"
+            f"Vertical Spacing: {self.vertical_spacing}"
+        )
+
+        plt.text(
+            0.02,
+            0.98,
+            metrics_text,
+            transform=ax.transAxes,
+            verticalalignment="top",
+            bbox=dict(boxstyle="round", facecolor="white", alpha=0.8),
+        )
+
+        ax.set_aspect("equal")
+        plt.grid(
+            False
+        )  # Turn off default grid to avoid conflict with our custom grid lines
+        plt.title("Grid Placement Results")
+
+        # Set limits with padding
+        plt.xlim(bounds[0] - 1, bounds[2] + 1)
+        plt.ylim(bounds[1] - 1, bounds[3] + 1)
+
+        # Add colorbar
+        sm = plt.cm.ScalarMappable(cmap=self.gradient_cmap)
+        sm.set_array([])
+        cbar = plt.colorbar(sm, ax=ax, label="Coverage Intensity")
+
+        return fig
 
 
 # === Optimization Model ===
-class GradientCircleCoverageSolver:
-    def __init__(self, room_vertices, grid_size=1.0, area_cell_size=0.1, lamp_lumen=1000):
+
+
+class LightGradientCoverageSolver:
+    def __init__(
+        self, room_vertices, grid_size=1.0, area_cell_size=0.1
+    ):
         self.room = Polygon(room_vertices)
         self.grid_size = grid_size
         self.area_cell_size = area_cell_size
         self.room_area = self.room.area
-        self.lamp_lumen = lamp_lumen
 
         # Create custom colormap from green to blue with more intermediate colors
         colors = [
@@ -65,26 +244,17 @@ class GradientCircleCoverageSolver:
 
         return cells
 
-    def get_coverage_value(self, circle_center, cell_center):
-        """Calculate illuminance based on lamp lumens and distance from light source.
-        Uses the inverse square law for light propagation."""
-        dx = circle_center[0] - cell_center[0]
-        dy = circle_center[1] - cell_center[1]
-        r = np.sqrt(dx * dx + dy * dy)
-        
-        # Avoid division by zero by using a small minimum distance
-        #r = max(r, 0.01)
-        
-        # Calculate illuminance using the inverse square law:
-        # E = Φ/(4πr²) where:
-        # E is illuminance in lux
-        # Φ is luminous flux in lumens
-        # r is distance in meters
-        illuminance = self.lamp_lumen / (4 * np.pi * r**2)
-        
-        return min(illuminance, 10000)
+    def get_coverage_value(self, light_center, cell_center):
+        """Calculate gradient coverage value based on distance from light center."""
+        dx = light_center[0] - cell_center[0]
+        dy = light_center[1] - cell_center[1]
+        distance = np.sqrt(dx * dx + dy * dy)
 
-
+        # Inverse square law with a small epsilon to avoid division by zero
+        if distance == 0:
+            return 1
+        
+        return 1 / (1 + distance**2)
 
     def get_cells_in_grid_cell(self, grid_x, grid_y, area_cells):
         """Get all small area cells that fall within a given grid cell."""
@@ -97,47 +267,46 @@ class GradientCircleCoverageSolver:
             (x, y) for x, y in area_cells if min_x <= x < max_x and min_y <= y < max_y
         ]
 
-    def solve(self, min_light_level=300, min_circle_spacing=1):
+    def solve(self, min_light_level=0.2, min_light_spacing=1):
         """
-        Solve the optimization problem to minimize number of circles while maintaining
-        minimum average coverage in each grid cell, with adjustable spacing between circles.
+        Solve the optimization problem to minimize number of lights while maintaining
+        minimum average coverage in each grid cell, with adjustable spacing between lights.
 
         Args:
-            min_light_level (float): Minimum average light level in lux required in each grid cell (default: 300)
-            min_circle_spacing (int): Minimum number of grid cells between circles (default: 1)
+            min_light_level (float): Minimum average light level required in each grid cell (default: 0.2)
+            min_light_spacing (int): Minimum number of grid cells between lights (default: 1)
         """
         grid_points = self.generate_grid_points()
         area_cells = self.generate_area_cells()
 
-        prob = pulp.LpProblem("MinimumCircleCoverage", pulp.LpMinimize)
+        prob = pulp.LpProblem("MinimumLightCoverage", pulp.LpMinimize)
 
-        # Binary variables for circle placement
-        circle_vars = pulp.LpVariable.dicts(
-            "circle", ((x, y) for x, y in grid_points), cat="Binary"
+        # Binary variables for light placement
+        light_vars = pulp.LpVariable.dicts(
+            "light", ((x, y) for x, y in grid_points), cat="Binary"
         )
 
-        # Continuous variables for cell light levels (in lux)
+        # Continuous variables for cell light levels
         cell_vars = pulp.LpVariable.dicts(
             "cell", ((x, y) for x, y in area_cells), lowBound=0
         )
 
-        # Objective: Minimize number of circles
-        prob += pulp.lpSum(circle_vars[x, y] for x, y in grid_points)
+        # Objective: Minimize number of lights
+        prob += pulp.lpSum(light_vars[x, y] for x, y in grid_points)
 
-        # Set up constraints for small cell values based on circle coverage
+        # Set up constraints for small cell values based on light coverage
         for cell_x, cell_y in area_cells:
-            covering_circles = []
+            covering_lights = []
             for grid_x, grid_y in grid_points:
                 coverage_value = self.get_coverage_value(
                     (grid_x, grid_y), (cell_x, cell_y)
                 )
-                # Only include coverage values that provide meaningful contribution
-                if coverage_value > 1.0:  # Threshold to consider for optimization in lux
-                    covering_circles.append(
-                        coverage_value * circle_vars[grid_x, grid_y]
+                if coverage_value > 0:
+                    covering_lights.append(
+                        coverage_value * light_vars[grid_x, grid_y]
                     )
 
-            prob += cell_vars[cell_x, cell_y] == pulp.lpSum(covering_circles)
+            prob += cell_vars[cell_x, cell_y] == pulp.lpSum(covering_lights)
 
         # Add minimum average constraint for each grid cell using the parameter
         for grid_x, grid_y in grid_points:
@@ -147,8 +316,8 @@ class GradientCircleCoverageSolver:
                     cell_vars[x, y] for x, y in grid_cells
                 ) >= min_light_level * len(grid_cells)
 
-        # Add constraint to prevent circles from being too close to each other
-        if min_circle_spacing > 0:
+        # Add constraint to prevent lights from being too close to each other
+        if min_light_spacing > 0:
             for x1, y1 in grid_points:
                 # Calculate neighbors based on spacing parameter
                 neighbors = []
@@ -161,13 +330,13 @@ class GradientCircleCoverageSolver:
                             dx / self.grid_size, dy / self.grid_size
                         )
                         # If the distance is less than the minimum spacing
-                        if distance_in_grid_cells <= min_circle_spacing:
+                        if distance_in_grid_cells <= min_light_spacing:
                             neighbors.append((x2, y2))
 
                 # For each close neighbor, add constraint
                 for x2, y2 in neighbors:
-                    # Add constraint: at most one of these two cells can have a circle
-                    prob += circle_vars[x1, y1] + circle_vars[x2, y2] <= 1
+                    # Add constraint: at most one of these two cells can have a light
+                    prob += light_vars[x1, y1] + light_vars[x2, y2] <= 1
 
         # Display a status message in Streamlit
         status_placeholder = st.empty()
@@ -183,10 +352,10 @@ class GradientCircleCoverageSolver:
             status_placeholder.success(status_message)
 
         # Extract results
-        selected_circles = []
+        selected_lights = []
         for x, y in grid_points:
-            if circle_vars[x, y].value() > 0.5:
-                selected_circles.append((x, y))
+            if light_vars[x, y].value() > 0.5:
+                selected_lights.append((x, y))
 
         # Calculate light levels for visualization and verification
         cell_coverage = {}
@@ -197,9 +366,9 @@ class GradientCircleCoverageSolver:
 
             for cell_x, cell_y in grid_cells:
                 cell_total = 0
-                for circle_x, circle_y in selected_circles:
+                for light_x, light_y in selected_lights:
                     coverage = self.get_coverage_value(
-                        (circle_x, circle_y), (cell_x, cell_y)
+                        (light_x, light_y), (cell_x, cell_y)
                     )
                     cell_total += coverage
                 cell_coverage[(cell_x, cell_y)] = cell_total
@@ -209,30 +378,28 @@ class GradientCircleCoverageSolver:
                 grid_avg = grid_total / len(grid_cells)
                 grid_averages[(grid_x, grid_y)] = grid_avg
 
-        return selected_circles, cell_coverage, grid_averages
+        return selected_lights, cell_coverage, grid_averages
 
-    def visualize(self, circles, cell_coverage):
-        """Visualize the solution with actual lux values."""
+    def visualize(self, lights, cell_coverage):
+        """Visualize the solution with gradient coverage."""
         fig, ax = plt.subplots(figsize=(10, 8))
 
         # Plot room boundary
         room_x, room_y = self.room.exterior.xy
         ax.plot(room_x, room_y, "k-", label="Room boundary")
 
-        # Determine lux range for visualization
-        # Set scale to match typical indoor illuminance values: 0-1000 lux
-        min_lux = 0
-        max_lux = 1000  # Cap for visualization
-        
-        # Plot illuminance levels with actual lux values
-        for (x, y), lux in cell_coverage.items():
-            # Clip lux to range for visualization
-            norm_lux = lux / max_lux
+        # Plot gradient coverage
+        max_coverage = max(cell_coverage.values()) if cell_coverage else 1.0
+        if max_coverage == 0:
+            max_coverage = 1.0
+
+        for (x, y), coverage in cell_coverage.items():
+            normalized_coverage = coverage / max_coverage
             rect = plt.Rectangle(
                 (x - self.area_cell_size / 2, y - self.area_cell_size / 2),
                 self.area_cell_size,
                 self.area_cell_size,
-                color=self.gradient_cmap(norm_lux),
+                color=self.gradient_cmap(normalized_coverage),
                 alpha=0.8,
             )
             ax.add_patch(rect)
@@ -251,26 +418,16 @@ class GradientCircleCoverageSolver:
             )
             ax.add_patch(rect)
 
-        # Plot light sources
-        for x, y in circles:
-            # Draw light source indicators
-            center = plt.Circle((x, y), 0.2, fill=True, color="white", edgecolor="black", linewidth=1.5)
-            ax.add_patch(center)
-
-            # Add light rays
-            for angle in range(0, 360, 30):
-                angle_rad = np.radians(angle)
-                dx = 0.5 * np.cos(angle_rad)
-                dy = 0.5 * np.sin(angle_rad)
-                ax.plot([x, x + dx], [y, y + dy], 'yellow', linewidth=1.2)
+        # Plot lights
+        for x, y in lights:
+            # Add a smaller circle at the center for better visibility
+            light = plt.Circle((x, y), 0.1, fill=True, color="red")
+            ax.add_patch(light)
 
         # Add metrics text
-        max_actual_lux = max(cell_coverage.values()) if cell_coverage else 0
         metrics_text = (
             f"Room Area: {self.room_area:.2f} sq units\n"
-            f"Number of Light Sources: {len(circles)}\n"
-            f"Lamp Output: {self.lamp_lumen} lumens\n"
-            f"Maximum Illuminance: {max_actual_lux:.1f} lux"
+            f"Number of lights: {len(lights)}\n"
         )
 
         plt.text(
@@ -284,22 +441,17 @@ class GradientCircleCoverageSolver:
 
         ax.set_aspect("equal")
         plt.grid(True)
-        plt.title("Illuminance Optimization Results")
+        plt.title("Gradient Coverage Optimization Results")
 
         # Set limits with padding
         bounds = self.room.bounds
         plt.xlim(bounds[0] - 1, bounds[2] + 1)
         plt.ylim(bounds[1] - 1, bounds[3] + 1)
 
-        # Add colorbar with actual lux values
-        norm = plt.Normalize(min_lux, max_lux)
-        sm = plt.cm.ScalarMappable(cmap=self.gradient_cmap, norm=norm)
+        # Add colorbar
+        sm = plt.cm.ScalarMappable(cmap=self.gradient_cmap)
         sm.set_array([])
-        cbar = plt.colorbar(sm, ax=ax, label="Illuminance (lux)")
-        
-        # Add tick labels to colorbar with lux values
-        # cbar.set_ticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
-        #cbar.set_ticklabels(['0', '200', '400', '600', '800', '1000+'])
+        cbar = plt.colorbar(sm, ax=ax, label="Coverage Intensity")
 
         return fig
 
@@ -311,7 +463,7 @@ st.sidebar.header("Configuration")
 
 # Choose solution approach
 solution_approach = st.sidebar.radio(
-    "Solution Approach", ["Optimization Model"]
+    "Solution Approach", ["Optimization Model", "Grid Placement Model"]
 )
 
 # Room shape selection
@@ -360,83 +512,164 @@ else:  # Custom
             (0, 10),
         ]  # Default to L-shape
 
-# Add min_circle_spacing parameter to sidebar for Optimization Model
-st.sidebar.header("Optimization Parameters")
-grid_size = st.sidebar.slider("Grid Size", 0.5, 2.0, 1.0, 0.1)
-area_cell_size = st.sidebar.slider("Area Cell Size", 0.1, 0.5, 0.2, 0.05)
-min_light_level = st.sidebar.slider("Minimum Light Level (lux)", 300, 500, 100, 10)
-lamp_lumen = st.sidebar.slider("Lamp Luminous Flux (lumens)", 500, 1000, 2000, 100)
-min_circle_spacing = st.sidebar.slider(
-    "Minimum Circle Spacing (grid cells)",
-    0,
-    3,
-    1,
-    1,
-    help="Minimum number of grid cells between circles. Set to 0 to allow adjacent placement.",
-)
+# Add min_light_spacing parameter to sidebar for Optimization Model
+if solution_approach == "Optimization Model":
+    st.sidebar.header("Optimization Parameters")
+    grid_size = st.sidebar.slider("Grid Size", 0.5, 2.0, 1.0, 0.1)
+    area_cell_size = st.sidebar.slider("Area Cell Size", 0.1, 0.5, 0.2, 0.05)
+    min_light_level = st.sidebar.slider("Minimum Light Level", 0.1, 1.0, 0.3, 0.05)
+    min_light_spacing = st.sidebar.slider(
+        "Minimum Light Spacing (grid cells)",
+        0,
+        3,
+        1,
+        1,
+        help="Minimum number of grid cells between lights. Set to 0 to allow adjacent placement.",
+    )
+else:  # Grid Placement Model
+    st.sidebar.header("Grid Placement Parameters")
+    wall_distance = st.sidebar.slider("Distance from Walls", 0.5, 3.0, 1.2, 0.1)
+    horizontal_spacing = st.sidebar.slider("Horizontal Spacing", 1.0, 5.0, 2.5, 0.1)
+    vertical_spacing = st.sidebar.slider("Vertical Spacing", 1.0, 5.0, 2.5, 0.1)
 
-
-solver = GradientCircleCoverageSolver(
-    room_vertices, grid_size=grid_size, area_cell_size=area_cell_size, lamp_lumen=lamp_lumen
-)
+# Initialize solvers based on selected approach
+if solution_approach == "Optimization Model":
+    solver = LightGradientCoverageSolver(
+        room_vertices,
+        grid_size=grid_size,
+        area_cell_size=area_cell_size,
+    )
+else:  # Grid Placement Model
+    solver = GridPlacementSolver(
+        room_vertices,
+        wall_distance=wall_distance,
+        horizontal_spacing=horizontal_spacing,
+        vertical_spacing=vertical_spacing,
+    )
 
 # Main content
-col, col2 = st.columns([3, 1])
+col1, col2 = st.columns([3, 1])
 
-with col:
+with col1:
     st.subheader("Room and Coverage Visualization")
 
-    # Run optimization when button is clicked
-    if st.button("Run Optimization"):
-        with st.spinner("Optimizing circle placement..."):
-            circles, cell_coverage, grid_averages = solver.solve(
-                min_light_level=min_light_level
-            )
+    if solution_approach == "Optimization Model":
+        # Run optimization when button is clicked
+        if st.button("Run Optimization"):
+            with st.spinner("Optimizing light placement..."):
+                lights, cell_coverage, grid_averages = solver.solve(
+                    min_light_level=min_light_level
+                )
 
-            # Visualization
-            fig = solver.visualize(circles, cell_coverage)
+                # Visualization
+                fig = solver.visualize(lights, cell_coverage)
+                st.pyplot(fig)
+
+                # Save results in session state for tables
+                st.session_state["lights"] = lights
+                st.session_state["grid_averages"] = grid_averages
+                st.session_state["cell_coverage"] = cell_coverage
+                st.session_state["is_optimized"] = True
+                st.session_state["is_grid_placed"] = False
+        elif not st.session_state.get("is_optimized", False):
+            # Show an initial room visualization without lights
+            fig, ax = plt.subplots(figsize=(10, 8))
+            room_x, room_y = solver.room.exterior.xy
+            ax.plot(room_x, room_y, "k-", linewidth=2)
+            ax.set_aspect("equal")
+            plt.grid(True)
+            plt.title("Room Layout")
+
+            # Set limits with padding
+            bounds = solver.room.bounds
+            plt.xlim(bounds[0] - 1, bounds[2] + 1)
+            plt.ylim(bounds[1] - 1, bounds[3] + 1)
+
+            st.pyplot(fig)
+            st.info("Click 'Run Optimization' to find the optimal light placement.")
+        else:
+            # Show previously generated optimization results if they exist
+            lights = st.session_state.get("lights", [])
+            cell_coverage = st.session_state.get("cell_coverage", {})
+            fig = solver.visualize(lights, cell_coverage)
             st.pyplot(fig)
 
-            # Save results in session state for tables
-            st.session_state["circles"] = circles
-            st.session_state["grid_averages"] = grid_averages
-            st.session_state["cell_coverage"] = cell_coverage
-            st.session_state["is_optimized"] = True
-            st.session_state["is_grid_placed"] = False
-    elif not st.session_state.get("is_optimized", False):
-        # Show an initial room visualization without circles
-        fig, ax = plt.subplots(figsize=(10, 8))
-        room_x, room_y = solver.room.exterior.xy
-        ax.plot(room_x, room_y, "k-", linewidth=2)
-        ax.set_aspect("equal")
-        plt.grid(True)
-        plt.title("Room Layout")
+    else:  # Grid Placement Model
+        # Run grid placement when button is clicked
+        if st.button("Generate Grid Placement"):
+            with st.spinner("Generating grid placement..."):
+                lights, cell_coverage = solver.solve()
 
-        # Set limits with padding
-        bounds = solver.room.bounds
-        plt.xlim(bounds[0] - 1, bounds[2] + 1)
-        plt.ylim(bounds[1] - 1, bounds[3] + 1)
+                # Visualization
+                fig = solver.visualize(lights, cell_coverage)
+                st.pyplot(fig)
 
-        st.pyplot(fig)
-        st.info("Click 'Run Optimization' to find the optimal circle placement.")
-    else:
-        # Show previously generated optimization results if they exist
-        circles = st.session_state.get("circles", [])
-        cell_coverage = st.session_state.get("cell_coverage", {})
-        fig = solver.visualize(circles, cell_coverage)
-        st.pyplot(fig)
+                # Save results in session state for tables
+                st.session_state["lights"] = lights
+                st.session_state["cell_coverage"] = cell_coverage
+                st.session_state["is_grid_placed"] = True
+                st.session_state["is_optimized"] = False
+
+                # Calculate average coverage per region (for display purposes)
+                bounds = solver.room.bounds
+                x_min, y_min, x_max, y_max = bounds
+                grid_averages = {}
+
+                # Create grid cells for averaging
+                cell_size = min(horizontal_spacing, vertical_spacing)
+                for x in np.arange(x_min, x_max, cell_size):
+                    for y in np.arange(y_min, y_max, cell_size):
+                        cell_points = [
+                            (px, py)
+                            for (px, py), cov in cell_coverage.items()
+                            if x <= px < x + cell_size and y <= py < y + cell_size
+                        ]
+                        if cell_points:
+                            cell_values = [
+                                cell_coverage[(px, py)] for px, py in cell_points
+                            ]
+                            grid_averages[(x + cell_size / 2, y + cell_size / 2)] = sum(
+                                cell_values
+                            ) / len(cell_values)
+
+                st.session_state["grid_averages"] = grid_averages
+
+        elif not st.session_state.get("is_grid_placed", False):
+            # Show an initial room visualization without lights
+            fig, ax = plt.subplots(figsize=(10, 8))
+            room_x, room_y = solver.room.exterior.xy
+            ax.plot(room_x, room_y, "k-", linewidth=2)
+            ax.set_aspect("equal")
+            plt.grid(True)
+            plt.title("Room Layout")
+
+            # Set limits with padding
+            bounds = solver.room.bounds
+            plt.xlim(bounds[0] - 1, bounds[2] + 1)
+            plt.ylim(bounds[1] - 1, bounds[3] + 1)
+
+            st.pyplot(fig)
+            st.info(
+                "Click 'Generate Grid Placement' to create a grid-based light placement."
+            )
+        else:
+            # Show previously generated grid placement results if they exist
+            lights = st.session_state.get("lights", [])
+            cell_coverage = st.session_state.get("cell_coverage", {})
+            fig = solver.visualize(lights, cell_coverage)
+            st.pyplot(fig)
 
 with col2:
     st.subheader("Results")
-    if "circles" in st.session_state:
-        st.metric("Number of Circles", len(st.session_state["circles"]))
+    if "lights" in st.session_state:
+        st.metric("Number of Lights", len(st.session_state["lights"]))
         st.metric("Room Area", f"{solver.room_area:.2f} sq units")
 
-        # Display circle positions
-        st.subheader("Circle Positions")
-        circle_df_data = [{"X": x, "Y": y} for x, y in st.session_state["circles"]]
-        if circle_df_data:
-            st.dataframe(circle_df_data, height=200)
+        # Display light positions
+        st.subheader("Light Positions")
+        light_df_data = [{"X": x, "Y": y} for x, y in st.session_state["lights"]]
+        if light_df_data:
+            st.dataframe(light_df_data, height=200)
 
         # Display average coverage
         st.subheader("Grid Cell Coverage")
@@ -460,23 +693,41 @@ with col2:
         st.info("Results will appear here after optimization")
 
 # Add explanations based on solution approach
-st.markdown("""
-## How the Optimization Model Works
+if solution_approach == "Optimization Model":
+    st.markdown("""
+    ## How the Optimization Model Works
 
-This app optimizes the placement of circles to provide gradient coverage in a room:
+    This app optimizes the placement of lights to provide gradient coverage in a room:
 
-1. **Problem**: Place the minimum number of circles while ensuring each grid cell has at least the specified minimum light level.
-2. **Gradient Coverage**: Light intensity decreases with the square of distance from the light source.
-3. **Optimization**: Uses integer linear programming to find the optimal solution.
-4. **Spacing Constraint**: Controls the minimum distance between any two circles.
+    1. **Problem**: Place the minimum number of lights while ensuring each grid cell has at least the specified minimum light level.
+    2. **Gradient Coverage**: Light intensity decreases with distance from the light center.
+    3. **Optimization**: Uses integer linear programming to find the optimal solution.
+    4. **Spacing Constraint**: Controls the minimum distance between any two lights.
 
-## Parameters Explained
+    ## Parameters Explained
 
-- **Grid Size**: Size of each grid cell for potential light placement
-- **Area Cell Size**: Granularity for measuring coverage (smaller = more accurate but slower)
-- **Minimum Light Level**: Required average light intensity in each grid cell
-- **Minimum Circle Spacing**: Controls how far apart circles must be placed (in grid cells)
-""")
+    - **lights Radius**: Radius of each coverage light
+    - **Area Cell Size**: Granularity for measuring coverage (smaller = more accurate but slower)
+    - **Minimum Light Level**: Required average light intensity in each grid cell
+    - **Minimum Light Spacing**: Controls how far apart lights must be placed (in grid cells)
+    """)
+else:  # Grid Placement Model
+    st.markdown("""
+    ## How the Grid Placement Model Works
+
+    This approach places lights in a regular grid pattern:
+
+    1. **Wall Distance**: lights are placed at a fixed distance from walls
+    2. **Regular Spacing**: lights are placed with fixed horizontal and vertical spacing
+    3. **Gradient Coverage**: Light intensity decreases with distance from each light
+    4. **Simple Algorithm**: No optimization - just regular grid placement
+
+    ## Parameters Explained
+
+    - **Distance from Walls**: How far to place lights from the walls
+    - **Horizontal Spacing**: Distance between lights in the horizontal direction
+    - **Vertical Spacing**: Distance between lights in the vertical direction
+    """)
 
 # Comparison section when both models have been run
 if st.session_state.get("is_optimized", False) and st.session_state.get(
@@ -485,29 +736,32 @@ if st.session_state.get("is_optimized", False) and st.session_state.get(
     st.markdown("---")
     st.subheader("Model Comparison")
 
-    opt_circles = len(
-        st.session_state.get("circles", [])
+    opt_lights = len(
+        st.session_state.get("lights", [])
         if st.session_state.get("is_optimized", False)
         else []
     )
-    grid_circles = len(
-        st.session_state.get("circles", [])
+    grid_lights = len(
+        st.session_state.get("lights", [])
         if st.session_state.get("is_grid_placed", False)
         else []
     )
 
-    col= st.columns(1)
-    with col:
-        st.metric("Optimization Model", f"{opt_circles} circles")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("Optimization Model", f"{opt_lights} lights")
+    with col2:
+        st.metric("Grid Placement Model", f"{grid_lights} lights")
 
     st.markdown("""
     ### Key Differences
     
-    - **Optimization Model**: Finds the minimum number of circles needed to meet coverage requirements
+    - **Optimization Model**: Finds the minimum number of lights needed to meet coverage requirements
+    - **Grid Placement Model**: Uses a fixed pattern based on spacing parameters
     
     Try adjusting parameters of both models to see how they affect coverage and efficiency!
     """)
 
 # Footer
 st.markdown("---")
-st.caption("Circle Coverage Optimization Tool")
+st.caption("Light Coverage Optimization Tool")
