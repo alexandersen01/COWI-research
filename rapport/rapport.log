@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.1) (preloaded format=pdflatex 2025.4.13)  13 APR 2025 14:08
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.1) (preloaded format=pdflatex 2025.4.13)  16 APR 2025 10:36
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -478,7 +478,7 @@ Package hyperref Info: Link coloring OFF on input line 18.
 \@outlinefile=\write4
 \openout4 = `rapport.out'.
 
-<tetris.png, id=35, 1204.5pt x 803.0pt>
+<tetris.png, id=87, 1204.5pt x 803.0pt>
 File: tetris.png Graphic file (type png)
 <use tetris.png>
 Package pdftex.def Info: tetris.png  used on input line 34.
@@ -490,27 +490,43 @@ File: ufontawesometwo.fd 2016/05/22 Font definitions for U/fontawesometwo.
 
 [1
 
-{/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/data/fonts/map/pdftex/pdftex.map} <./tetris.png>]
+{/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/data/fonts/map/pdftex/pdftex.map} <./tetris.png>] (rapport.toc
+LaTeX Font Info:    Trying to load font information for U+msa on input line 4.
+ (/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 4.
+ (/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+))
+\tf@toc=\write5
+\openout5 = `rapport.toc'.
+
+
 
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.102 \newpage
-               [1]
-LaTeX Font Info:    Trying to load font information for U+msa on input line 110.
- (/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/tex/latex/amsfonts/umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 110.
- (/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/tex/latex/amsfonts/umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
+l.59 \newpage
+              [1]
 
 [2]
 
 [3]
-runsystem(latexminted cleantemp  --timestamp 20250413140810 9B93A196AC81D5582C7822FBF85B1B25)...disabled (restricted).
+
+[4]
+
+[5]
+
+[6]
+
+[7]
+
+[8]
+
+[9]
+runsystem(latexminted cleantemp  --timestamp 20250416103607 9B93A196AC81D5582C7822FBF85B1B25)...disabled (restricted).
 
  (rapport.aux)
  ***********
@@ -518,20 +534,20 @@ LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
 Package rerunfilecheck Info: File `rapport.out' has not changed.
-(rerunfilecheck)             Checksum: EF84C5D91141E76D7242C00AF6099A86;1013.
+(rerunfilecheck)             Checksum: 50239E8BBD2E746F6E11D412FA74063A;3018.
  ) 
 Here is how much of TeX's memory you used:
- 17886 strings out of 473530
- 335224 string characters out of 5697419
- 843242 words of memory out of 5000000
- 40863 multiletter control sequences out of 15000+600000
+ 17927 strings out of 473530
+ 335780 string characters out of 5697419
+ 843251 words of memory out of 5000000
+ 40880 multiletter control sequences out of 15000+600000
  562976 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,12n,79p,582b,522s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/enc/dvips/fontawesome/fontawesometwo.enc}</Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/fontawesome/FontAwesome.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx10.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx12.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmex10.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi10.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi5.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi7.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr10.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr12.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr5.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr7.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy7.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on rapport.pdf (4 pages, 188241 bytes).
+Output written on rapport.pdf (10 pages, 211083 bytes).
 PDF statistics:
- 165 PDF objects out of 1000 (max. 8388607)
- 38 named destinations out of 1000 (max. 500000)
- 70 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 269 PDF objects out of 1000 (max. 8388607)
+ 59 named destinations out of 1000 (max. 500000)
+ 174 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -203,7 +203,10 @@ INPUT /Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/i
 INPUT /Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/data/fonts/map/pdftex/pdftex.map
 INPUT /Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmr12.tfm
 INPUT /Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmbx12.tfm
-INPUT /Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmbx12.tfm
+INPUT ./rapport.toc
+INPUT ./rapport.toc
+INPUT rapport.toc
+INPUT /Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmbx10.tfm
 INPUT /Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
 INPUT /Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
 INPUT /Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/tex/latex/amsfonts/umsa.fd
@@ -218,7 +221,8 @@ INPUT /Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/i
 INPUT /Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
 INPUT /Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/amsfonts/symbols/msbm5.tfm
-INPUT /Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmbx10.tfm
+OUTPUT rapport.toc
+INPUT /Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmbx12.tfm
 INPUT rapport.aux
 INPUT ./rapport.out
 INPUT ./rapport.out
