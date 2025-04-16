@@ -21,7 +21,7 @@ class VisualizationView:
 
 class GridPlacementView(VisualizationView):
     """Visualization view for grid placement model."""
-    def visualize(self, model, circles, cell_coverage):
+    def visualize(self, model, lights, cell_coverage):
         """Visualize the solution with gradient coverage."""
         fig, ax = plt.subplots(figsize=(10, 8))
 
@@ -59,21 +59,15 @@ class GridPlacementView(VisualizationView):
         for y in y_positions:
             plt.axhline(y, color='gray', linestyle='--', alpha=0.3)
 
-        # Plot circles
-        for x, y in circles:
-            circle = plt.Circle(
-                (x, y), model.circle_radius, fill=False, color="red", alpha=0.7, linewidth=2
-            )
-            ax.add_patch(circle)
-            # Add a smaller circle at the center for better visibility
-            center = plt.Circle((x, y), 0.1, fill=True, color="red")
-            ax.add_patch(center)
+        # Plot lights
+        for x, y in lights:
+            light = plt.Circle((x, y), 0.1, fill=True, color="red")
+            ax.add_patch(light)
 
         # Add metrics text
         metrics_text = (
             f"Room Area: {model.room_area:.2f} sq units\n"
-            f"Number of Circles: {len(circles)}\n"
-            f"Circle Radius: {model.circle_radius}\n"
+            f"Number of Lights: {len(lights)}\n"
             f"Wall Distance: {model.wall_distance}\n"
             f"Horizontal Spacing: {model.horizontal_spacing}\n"
             f"Vertical Spacing: {model.vertical_spacing}"
@@ -105,7 +99,7 @@ class GridPlacementView(VisualizationView):
 
 class OptimizationView(VisualizationView):
     """Visualization view for optimization model."""
-    def visualize(self, model, circles, cell_coverage):
+    def visualize(self, model, lights, cell_coverage):
         """Visualize the solution with gradient coverage."""
         fig, ax = plt.subplots(figsize=(10, 8))
 
@@ -143,21 +137,15 @@ class OptimizationView(VisualizationView):
             )
             ax.add_patch(rect)
 
-        # Plot circles
-        for x, y in circles:
-            circle = plt.Circle(
-                (x, y), model.circle_radius, fill=False, color="red", alpha=0.7, linewidth=2
-            )
-            ax.add_patch(circle)
-            # Add a smaller circle at the center for better visibility
-            center = plt.Circle((x, y), 0.1, fill=True, color="red")
-            ax.add_patch(center)
+        # Plot lights
+        for x, y in lights:
+            light = plt.Circle((x, y), 0.1, fill=True, color="red")
+            ax.add_patch(light)
 
         # Add metrics text
         metrics_text = (
             f"Room Area: {model.room_area:.2f} sq units\n"
-            f"Number of Circles: {len(circles)}\n"
-            f"Circle Radius: {model.circle_radius}"
+            f"Number of Lights: {len(lights)}\n"
         )
 
         plt.text(
