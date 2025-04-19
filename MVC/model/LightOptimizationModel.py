@@ -110,13 +110,13 @@ class BaseSolverModel:
         """Calculate gradient coverage value based on distance from light center."""
         dx = light_center[0] - point[0]
         dy = light_center[1] - point[1]
-        distance = np.sqrt(dx * dx + dy * dy)
+        dz = -1
+        distance = np.sqrt(dx**2 + dy**2 + dz**2)
         
-        # Inverse square law with a small epsilon to avoid division by zero
-        if distance == 0:
-            return 1
 
-        return 1 / (1 + distance**2)
+        cos_theta = abs(dz) / distance
+
+        return (1 * cos_theta) / distance**2
 
 class GridPlacementModel(BaseSolverModel):
     """Model for grid-based light placement."""
