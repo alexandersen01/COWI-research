@@ -69,7 +69,7 @@ minimizing the amount of lights used whilst still being compliant with regulator
 and aesthetic requirements.
 
 There are many different approaches to such a challenge. For instance, COWI presented
-a genetic algorithm/reinforcement learning ML-based solution. Their apprach 
+a genetic algorithm/reinforcement learning ML-based solution. Their approach 
 entailed maximizing coverage area while maintaining a pattern by penalizing variations
 in x/y coordinates. 
 
@@ -114,85 +114,88 @@ if we choose to also incorporate positioning of a sprinkler system.
 In this section, we will discuss the mathematical model behind the program.
 
 \subsection{Sets and Indices}
-
 \begin{align}
-    G = (x, y) \mid (x, y) \in \mathbb{R}
-\end{align}
-\begin{align}
-    A = (x, y) \mid (x, y) \in \mathbb{R}
+    G &= \{(x, y) \mid (x, y) \in \mathbb{R}^2\} \quad \text{(Grid points for potential circle placement)}\\
+    A &= \{(x, y) \mid (x, y) \in \mathbb{R}^2\} \quad \text{(Area cells for measuring coverage)}
 \end{align}
 
 \subsection{Decision Variables}
-
 \begin{align}
-    z_{x, y} \in \{0, 1\} \text{ for } (x, y) \in G
-\end{align}
-\begin{align}
-    c_{x, y} \geq 0 \text{ for } (x, y) \in G
+    z_{x, y} &\in \{0, 1\} \quad \forall (x, y) \in G \quad \text{(Binary variable for circle placement)}\\
+    c_{x, y} &\geq 0 \quad \forall (x, y) \in A \quad \text{(Continuous variable for cell light level)}
 \end{align}
 
 \subsection{Parameters}
-
 \begin{align}
-    \alpha_{(x_g, y_g), (x_a, y_a)} \in \{0, 1\}
-\end{align}
-\begin{align}
-    L_{\min} \geq 0
-\end{align}
-\begin{align}
-        S_{\min} \geq 0
-\end{align}
-\begin{align}
-    A_g
+    \alpha_{(x_g, y_g), (x_a, y_a)} &\geq 0 \quad \text{(Coverage value from grid point to area cell)}\\
+    L_{\min} &\geq 0 \quad \text{(Minimum required average light level)}\\
+    S_{\min} &\geq 0 \quad \text{(Minimum required spacing between circles)}\\
+    A_g &\subset A \quad \text{(Set of area cells within grid cell $g \in G$)}
 \end{align}
 
 \subsection{Objective Function}
-
 \begin{align}
-    \min \sum_{(x, y) \in G} z_{x, y}
+    \min \sum_{(x, y) \in G} z_{x, y} \quad \text{(Minimize total number of circles)}
 \end{align}
 
 \subsection{Constraints}
-
 \begin{align}
-    c_{x_a, y_a} = \sum_{(x, y) \in G} \alpha_{(x_g, y_g), {x_a, y_a}} \cdot z_{x_g, y_g} \quad\forall (x_a, y_a) \in A
-\end{align}
-\begin{align}
-    \sum_{(x_a, y_a) \in A_g} c_{x_a, y_a} \geq L_{\min} \cdot |A_g| \quad\forall g \in G \text{ where } |A_g| > 0
-\end{align}
-\begin{align}
-    \max \bigg(\frac{|x_1 - x_2|}{\text{grid size}}, \frac{|y_1 - y_2|}{\text{grid size}}\bigg) \leq S_{\min}
-\end{align}
-\begin{align}
-    z_{x_1, y_1} + z_{x_2, y_2} \leq 1
+    c_{x_a, y_a} &= \sum_{(x_g, y_g) \in G} \alpha_{(x_g, y_g), (x_a, y_a)} \cdot z_{x_g, y_g} \quad \forall (x_a, y_a) \in A\\
+    \sum_{(x_a, y_a) \in A_g} c_{x_a, y_a} &\geq L_{\min} \cdot |A_g| \quad \forall g \in G \text{ where } |A_g| > 0\\
+    z_{x_1, y_1} + z_{x_2, y_2} &\leq 1 \quad \forall (x_1,y_1),(x_2,y_2) \in G \text{ where } \max\left(\frac{|x_1-x_2|}{\text{grid\_size}}, \frac{|y_1-y_2|}{\text{grid\_size}}\right) \leq S_{\min}
 \end{align}
 
-\newpage
-
-\subsection{Equations explainations}
+\subsection{Constraints explainations}
 
 \begin{enumerate}
-    \item List of grid points where we may place light fixtures
-    \item List of smaller grid points used to calculate the coverage
-    \item Binary variable indicating whether a light is placed at point $(x, y)$ – $1$ if yes, $0$ otherwise
-    \item Continuous variable representing the light level at area cell $(x, y)$
-    \item Coverage value representing the amount of light that a fixture at grid point $(x_g,y_g)$ contributes to area cell $(x_a,y_a)$
-    \item Minimum average light level required in each grid cell
-    \item Minimum spacing required between fixtures (measured in grid units)
-    \item Set of area cells contained within the grid cell $g \in G$
-    \item \textbf{Minimize the total amount of light fixtures}
-    \item For each area cell $(x_a,y_a) \in A$, the light level is determined by the sum of contributions from all placed fixtures
-    \item For each grid cell $(x_g,y_g) \in G$, the average light level across all contained area cells must meet or exceed the minimum requirement
-    \item For any two grid points $(x_1,y_1), (x_2,y_2) \in G$ that are closer than the minimum spacing,
-    \item We add the constraint that at most one of them can have a fixture
-    \item TODO: add neigh constraint 
+    \setcounter{enumi}{9}
+    \item Defines how the light level for each area cell is calculated
+    \item Ensures that each grid cell receives adequate light
+    \item Prevents lights from being placed too close to each other
+    \item TODO add neigh constraint 
 \end{enumerate}
 
 \newpage
 
 \section{Execution}
+
+In this section we will shine some light on how we chose to solve the main problem – finding the optimal solution via a generic algorithm 
+for placing light fixtures in any room of any size.
+
 \subsection{Method (jakob)}
-\subsection{What we tried: (hanna)}
+
+As previously mentioned, a genetic algorithm/RL approach was presented to us. Although this can be a good solution in some cases, we found out that
+this method does not provide heuristics that are sufficiently effective or efficient for approximating the optimal solution.
+
+Our approach to optimizing light fixture placement employs linear programming (LP), a powerful mathematical optimization technique that allows us to 
+find the exact minimum number of fixtures required while satisfying all regulatory and aesthetic constraints.
+
+The problem is formulated as a binary integer linear program where each potential fixture location is represented by a binary decision 
+variable. The objective function minimizes the total number of fixtures, subject to a set of constraints that ensure adequate light coverage 
+and appropriate spacing between fixtures. 
+
+The room is first resized into a smaller polygon. The reason for this is so that we can avoid considering not placing lights near the walls. 
+This is a relatively easy and efficient way of minimizing computational cost as we don't need to define this in the constraints. Next up, we 
+discretize the room into a grid, where each grid point represents a potential fixture location. A finer grid of area cells is then used to evaluate
+light coverage with precision. For each area cell, we calculate the light contribution from all potential fixture locations, creating a coverage
+model that accounts for light falloff with distance. 
+
+Two primary constraint types govern our solution; coverage constraints ensure that each area maintains at least the minimum required light level 
+(lux) specified by regulations, while spacing constraints enforce a minimum distance between fixtures to create aesthetically pleasing and 
+practically functional layouts. 
+
+Unlike heuristic approaches such as genetic algorithms that approximate solutions, our LP formulation guarantees finding the mathematically optimal 
+solution whenever one exists. This mathematical certainty is particularly valuable in contexts where regulatory compliance must be definitively
+demonstrated. 
+
+The model's flexibility allows for straightforward parameter adjustments to accomodate different regulatory standards or design preferences. 
+By simply modifying the minimum lux parameter or the fixture spacing requirement, the model can be adapted to various building types and usage 
+scenarios without requiring findamental changes to the underlying optimization approach.
+
+Implementation is achieved using the PuLP library in Python, which interfaces with powerful LP solvers capable of handling the binary 
+integer programming challenges in the problem space.
+
+\subsection{What we tried: (hanna) (talk about our shortcomings)}
 
 \newpage
 
