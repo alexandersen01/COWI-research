@@ -215,4 +215,21 @@ In this section, we will discuss the mathematical model behind the program.
 
 \section{Conclusion (Hermann)}
 
+In this project, we have explored two approaches to lighting optimization using the PuLP library, a mixed-integer programming solver.
+The first model uses a simple mathematical grid patterning approach that places lights based on fixed spacing rules, independent of actual lighting values.
+This results in visually good, regular arrangements, but lacks adaptability to lighting requirements.
+
+The second model is a constraint-based optimization solution that mathematically ensures compliance with lighting thresholds,
+fixture spacing, and other constraints. This model provides precise results and guarantees that the lighting meets the minimum lux requirement
+throughout the room. However, the output can sometimes appear less pleasing, especially in irregular spaces, as the focus is purely on optimization rather than visual symmetry.
+
+Through our experiments, we observed that the optimization model performs particularly well when the required lighting level is higher,
+such as 300 lux or more. In such cases, the denser fixture placement leaves more room for the solver to balance aesthetics and coverage.
+Conversely, at low lux requirements, the model tends to use fewer lights and may produce more irregular patterns.
+
+The project was carried out through structured collaboration, with group meetings and division of tasks ensuring even distribution of work 
+and collective problem-solving. Together, we have demonstrated how linear programming can be a powerful tool
+in practical engineering contexts, offering both adaptability and mathematical rigor.
+
+
 \end{document}

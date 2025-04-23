@@ -110,7 +110,7 @@ class BaseSolverModel:
         """Calculate gradient coverage value based on distance from light center."""
         dx = light_center[0] - point[0]
         dy = light_center[1] - point[1]
-        dz = -1
+        dz = -2
         distance = np.sqrt(dx**2 + dy**2 + dz**2)
         
 
