@@ -110,7 +110,7 @@ class AppController:
         """Set up parameters for optimization model."""
         st.sidebar.header("Optimization Parameters")
         area_cell_size = st.sidebar.slider("Area Cell Size", 0.1, 0.5, 0.2, 0.05)
-        min_light_level = st.sidebar.slider("Minimum Light Level", 0.1, 1.0, 0.3, 0.05)
+        min_light_level = st.sidebar.slider("Minimum Light Level", 0.1, 1.0, 0.4, 0.05)
         min_light_spacing = st.sidebar.slider("Minimum Light Spacing (grid cells)", 0, 3, 1, 1,
                                              help="Minimum number of grid cells between lighrs. Set to 0 to allow adjacent placement.")
         grid_size = st.sidebar.slider("Grid Size", 0.5, 2.0, 1.0, 0.1)

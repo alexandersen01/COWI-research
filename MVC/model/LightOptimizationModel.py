@@ -234,13 +234,13 @@ class OptimizationModel(BaseSolverModel):
             (x, y) for x, y in area_cells if min_x <= x < max_x and min_y <= y < max_y
         ]
 
-    def solve(self, min_light_level=0.2, min_light_spacing=1, status_callback=None):
+    def solve(self, min_light_level=0.4, min_light_spacing=1, status_callback=None):
         """
         Solve the optimization problem to minimize number of lights while maintaining
         minimum average coverage in each grid cell, with adjustable spacing between lights.
 
         Args:
-            min_light_level (float): Minimum average light level required in each grid cell (default: 0.2)
+            min_light_level (float): Minimum average light level required in each grid cell (default: 0.4)
             min_light_spacing (int): Minimum number of grid cells between lights (default: 1)
             status_callback (callable): Optional callback function to report status
         """
