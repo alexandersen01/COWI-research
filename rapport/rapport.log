@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.1) (preloaded format=pdflatex 2025.4.13)  4 MAY 2025 14:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.1) (preloaded format=pdflatex 2025.4.13)  4 MAY 2025 14:50
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -478,7 +478,7 @@ Package hyperref Info: Link coloring OFF on input line 18.
 \@outlinefile=\write4
 \openout4 = `rapport.out'.
 
-<tetris.png, id=107, 1204.5pt x 803.0pt>
+<tetris.png, id=87, 1204.5pt x 803.0pt>
 File: tetris.png Graphic file (type png)
 <use tetris.png>
 Package pdftex.def Info: tetris.png  used on input line 34.
@@ -524,9 +524,7 @@ l.59 \newpage
 [7]
 
 [8]
-
-[9]
-runsystem(latexminted cleantemp  --timestamp 20250504144655 9B93A196AC81D5582C7822FBF85B1B25)...disabled (restricted).
+runsystem(latexminted cleantemp  --timestamp 20250504145029 9B93A196AC81D5582C7822FBF85B1B25)...disabled (restricted).
 
  (rapport.aux)
  ***********
@@ -534,20 +532,20 @@ LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
 Package rerunfilecheck Info: File `rapport.out' has not changed.
-(rerunfilecheck)             Checksum: 860AFB7342378CCEFD5AE3243D0D1E00;3732.
+(rerunfilecheck)             Checksum: 6D484359C55894200CDFCA92B9D10F74;2877.
  ) 
 Here is how much of TeX's memory you used:
- 17927 strings out of 473530
- 335922 string characters out of 5697419
- 845254 words of memory out of 5000000
- 40886 multiletter control sequences out of 15000+600000
+ 17916 strings out of 473530
+ 335776 string characters out of 5697419
+ 845249 words of memory out of 5000000
+ 40881 multiletter control sequences out of 15000+600000
  562976 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,13n,79p,582b,522s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/enc/dvips/fontawesome/fontawesometwo.enc}</Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/fontawesome/FontAwesome.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx10.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx12.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmex10.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi10.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi5.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi7.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr10.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr12.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr5.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr7.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy7.pfb></Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on rapport.pdf (10 pages, 221180 bytes).
+Output written on rapport.pdf (9 pages, 215931 bytes).
 PDF statistics:
- 282 PDF objects out of 1000 (max. 8388607)
- 53 named destinations out of 1000 (max. 500000)
- 214 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 252 PDF objects out of 1000 (max. 8388607)
+ 47 named destinations out of 1000 (max. 500000)
+ 174 words of extra memory for PDF output out of 10000 (max. 10000000)
 

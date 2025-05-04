@@ -105,7 +105,20 @@ if we choose to also incorporate positioning of a sprinkler system.
 
 \newpage
 
-\section{Motivation and Introduction (Thone)}
+\section{Motivation and Introduction}
+
+The goal of this project is to optimize the placement of light sources within a room in order to achieve the best possible light coverage, while 
+ensuring that the lighting stays within a defined range of intensity (measured in LUX). Rather than maximizing the number of lights, the focus is on 
+maximizing the illuminated area and ensuring an even distribution of light, avoiding both underlit and overlit zones.
+
+Each light source is modeled as a red dot, and it produces a distribution of light visualized using color gradients. Brighter areas are shown in green, 
+indicating stronger illumination, while darker areas appear more blue, representing lower light intensity. Corners and edge zones, where lighting is less critical, 
+are deprioritized in the optimization process, allowing for a more efficient allocation of light coverage in central and more important areas.
+
+This project was conducted in collaboration with the engineering consultancy firm COWI, and guided academically by out course supervisor, Dag. We are a team of five 
+students with diverse academic backgrounds. Throughout the spring semester, we have worked closely together, holding regular internal meetings as well as joint sessions 
+with COWI and our academic advisor, to define requirements, develop solutions, and refine our approach.
+
 
 \newpage
 
@@ -195,6 +208,8 @@ scenarios without requiring findamental changes to the underlying optimization a
 Implementation is achieved using the PuLP library in Python, which interfaces with powerful LP solvers capable of handling the binary 
 integer programming challenges in the problem space.
 
+\newpage
+
 \subsection{What we tried: }
 
 \subsubsection{Pattern and symmetry}
@@ -221,17 +236,7 @@ Because of the time constraints and complexity, we decided to shift our focus to
 
 \newpage
 
-\section{Experiments (TBD)}
-\subsection{Light distribution plot}
-\subsection{Small room}
-\subsection{Large room}
-\subsection{Runtime Discussion}
-
-
-
-\newpage
-
-\section{Discussion (Håvard)}
+\section{Discussion}
 
 \subsection{Potential Improvements}
 At the first meeting with COWI, we were given a short explanation of the problem, as well as insight 
@@ -268,7 +273,7 @@ reasonable timeframe.
 
 \newpage
 
-\section{Conclusion (Hermann)}
+\section{Conclusion}
 
 In this project, we have explored two approaches to lighting optimization using the PuLP library, a mixed-integer programming solver.
 The first model uses a simple mathematical grid patterning approach that places lights based on fixed spacing rules, independent of actual lighting values.
