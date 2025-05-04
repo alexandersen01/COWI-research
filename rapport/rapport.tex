@@ -209,7 +209,37 @@ In this section, we will discuss the mathematical model behind the program.
 \section{Discussion (Håvard)}
 
 \subsection{Potential Improvements}
+At the first meeting with COWI, we were given a short explanation of the problem, as well as insight 
+into what they had tried prior to our involvement. They attempted to implement a genetic algorithm 
+to find a solution, without success.
+
+In our project, we chose to model the problem using linear programming (LP), which offered a transparent, 
+structured, and computationally efficient method to reach an optimal solution under given constraints. The 
+only problem was crafting these constraints in a way that would yield a feasible solution. Defining whether something 
+is optimal or not is a subjective matter, dependent on . While LP proved to 
+be effective for the problem at hand, there are several areas where our approach, and the overall process, could be 
+improved or extended. 
+
+\subsubsection{Clearity}
+Early in the project, we realized that more detailed input from the company regarding practical constraints 
+and priorities would have helped in developing a more realistic model. Certain business rules or preferences 
+may not have been fully captured by the LP formulation, due to either simplifications made on our side or 
+limitations in the initial communication. For future projects, closer collaboration in the problem-formulation 
+phase could enhance model relevance and accuracy.
+
 \subsubsection{Caching}
+As the model was supplemented with more constraints, sets, and parameters, we noticed that the solver's performance 
+declined. For further improvements, we suggest implementing a caching mechanism. This could reduce redundant computations 
+and significantly improve responsiveness, particularly when working with larger datasets or when users repeatedly 
+test different scenarios. This is especially important for deploying the tool in a real-world environment where several 
+users may interact with it simultaneously.
+
+\subsubsection{Scalability}
+While our model worked well for the current dataset and problem size, we identified potential issues with scalability. 
+Linear programming solvers can handle reasonably large problems, but as the number of decision variables and constraints 
+grows, the performance and clarity of the solution may degrade. For very large-scale instances, alternative approaches 
+such as decomposition methods or heuristics/metaheuristics might be needed to find near-optimal solutions within a 
+reasonable timeframe.
 
 \newpage
 
