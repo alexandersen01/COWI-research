@@ -1,4 +1,5 @@
 import streamlit as st
+import json
 import numpy as np
 from model.LightOptimizationModel import RoomModel, OptimizationModel, GridPlacementModel 
 from view.LightOptimizationView import OptimizationView, GridPlacementView
@@ -15,6 +16,8 @@ class AppController:
             st.session_state['is_grid_placed'] = False
         if 'json_loaded' not in st.session_state:
             st.session_state['json_loaded'] = False
+        if 'room_data' not in st.session_state:
+            st.session_state['room_data'] = None
     
     def setup_sidebar(self):
         """Set up the sidebar configuration."""
@@ -36,20 +39,74 @@ class AppController:
     
     def load_room_from_json(self):
         """Load room data from JSON file."""
+        # Only process the file if we haven't already or a new file is uploaded
         if ('json_loaded' not in st.session_state or not st.session_state.json_loaded):
-            success, message, data = self.room_model.load_json_rooms()
-            if success and data:
-                process_success, process_message = self.room_model.process_room_data(data)
-                st.sidebar.success(message)
-                if process_success:
-                    st.sidebar.success(process_message)
-                else:
-                    st.sidebar.warning(process_message)
+            if 'uploaded_json' in st.session_state and st.session_state.uploaded_json is not None:
+                try:
+                    # Read the content of the uploaded file
+                    file_content = st.session_state.uploaded_json.getvalue().decode('utf-8')
+                    data = json.loads(file_content)
+                    process_success, process_message = self.room_model.process_room_data(data)
+                
+                    if process_success:
+                        st.sidebar.success("JSON file uploaded and processed successfully")
+                        # Store the processed room data in session state
+                        st.session_state['room_data'] = self.room_model.rooms
+                        st.session_state.json_loaded = True
+                        return True
+                    else:
+                        st.sidebar.warning(f"Error processing JSON data: {process_message}")
+                        return False
+                except Exception as e:
+                    st.sidebar.error(f"Error loading JSON file: {str(e)}")
+                    return False
             else:
-                st.error(message)
-            st.session_state.json_loaded = success
-            return success
+                # Try standard file loading as fallback
+                success, message, data = self.room_model.load_json_rooms()
+                if success and data:
+                    process_success, process_message = self.room_model.process_room_data(data)
+                    if process_success:
+                        st.sidebar.success(message)
+                        st.sidebar.success(process_message)
+                        # Store the processed room data in session state
+                        st.session_state['room_data'] = self.room_model.rooms
+                        st.session_state.json_loaded = True
+                        return True
+                    else:
+                        st.sidebar.warning(process_message)
+                        return False
+                else:
+                    st.sidebar.warning(message)
+                    return False
+        # If the data is already loaded, restore it to the room_model
+        elif st.session_state.json_loaded and 'room_data' in st.session_state:
+            self.room_model.rooms = st.session_state['room_data']
+            return True
+    
         return st.session_state.json_loaded
+    
+    def _try_load_from_paths(self):
+        """Try to load JSON from predefined paths."""
+        possible_paths = [
+            'spatial_elements_boundaries.json',
+            './spatial_elements_boundaries.json',
+            '../spatial_elements_boundaries.json',
+            'spatial_elements_boundaries'  # Without extension
+        ]
+    
+        for path in possible_paths:
+            try:
+                with open(path, 'r') as f:
+                    data = json.load(f)
+                return True, f"Found and loaded JSON file: {path}", data
+            except FileNotFoundError:
+                continue
+            except json.JSONDecodeError:
+                return False, f"Invalid JSON format in file: {path}", None
+            except Exception as e:
+                return False, f"Error loading JSON file {path}: {str(e)}", None
+    
+        return False, "No JSON file found or uploaded. Please upload a file.", None
     
     def get_room_vertices(self, room_source):
         """Get room vertices based on selected source."""
@@ -113,7 +170,7 @@ class AppController:
         area_cell_size = st.sidebar.slider("Area Cell Size", 0.1, 0.5, 0.2, 0.05)
         min_light_level = st.sidebar.slider("Minimum Light Level", 0.1, 1.0, 0.3, 0.05)
         min_circle_spacing = st.sidebar.slider("Minimum Circle Spacing (grid cells)", 0, 3, 1, 1,
-                                             help="Minimum number of grid cells between circles. Set to 0 to allow adjacent placement.")
+        help="Minimum number of grid cells between circles. Set to 0 to allow adjacent placement.")
         grid_size = st.sidebar.slider("Grid Size", 0.5, 2.0, 1.0, 0.1)
         
         return {
