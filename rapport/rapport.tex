@@ -195,7 +195,29 @@ scenarios without requiring findamental changes to the underlying optimization a
 Implementation is achieved using the PuLP library in Python, which interfaces with powerful LP solvers capable of handling the binary 
 integer programming challenges in the problem space.
 
-\subsection{What we tried: (hanna) (talk about our shortcomings)}
+\subsection{What we tried: }
+
+\subsubsection{Pattern and symmetry}
+One thing we spent some time exploring was the idea of creating a pattern in the chaos. The first challenge was defining what a “nice” pattern actually means. There are many ways to place lights that can look good and maintain a cohesive feel in a room, but putting that into a concrete definition is difficult.
+
+We started experimenting with a grid-like structure of rows and columns, where the goal was to optimize both the spacing between light sources and their distance from the walls. This approach turned out to be very time-consuming and limiting. It excluded a variety of potentially good patterns, some of which might be better suited to certain types of rooms—and didn’t necessarily optimize the number of light sources used.
+
+During this process, we also tested a constraint where no two light sources could be placed directly next to each other. Interestingly, this often led to patterns that felt more balanced and comfortable, even without a precise definition of what we were aiming for.
+
+Although this idea didn’t make it into the final implementation, it helped us better understand how certain constraints can naturally lead to more visually appealing layouts.
+
+\subsubsection{Light distribution}
+Another area we spent some time on was distribution function for light. With so many different types of lamps, designing a distribution function that accurately reflects real-world lighting is a complex task. A fully accurate model would require a lot of computation and a many constraints to adapt to all possible light sources.
+
+In the end, we chose a simple light distribution function that gives a rough idea of how light spreads and how much of a room is covered. While not perfectly precise, it’s effective enough for visualizing light placement and coverage, and it allowed us to focus on other core aspects of the system.
+
+\subsubsection{Movable light sources}
+We also attempted to implement the ability to move light sources within the GUI after the optimization phase. The idea was to give users more control, allowing them to adjust placements manually if needed.
+
+However, this feature turned out to be more complex than expected. It involved not just updating the visual placement of the lights, but also syncing those changes with the backend data and ensuring consistency with the optimized layout. Implementing this properly would have required significant frontend development, which we hadn’t prioritized for this version of the project.
+
+Because of the time constraints and complexity, we decided to shift our focus to improving the backend functionality. This is a feature we believe has potential and could be explored further in future development.
+
 
 \newpage
 
