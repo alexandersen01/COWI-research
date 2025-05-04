@@ -109,31 +109,27 @@ class AppController:
     def setup_optimization_params(self):
         """Set up parameters for optimization model."""
         st.sidebar.header("Optimization Parameters")
-        circle_radius = st.sidebar.slider("Circle Radius", 0.5, 3.0, 1.5, 0.1)
         area_cell_size = st.sidebar.slider("Area Cell Size", 0.1, 0.5, 0.2, 0.05)
-        min_light_level = st.sidebar.slider("Minimum Light Level", 0.1, 1.0, 0.3, 0.05)
-        min_circle_spacing = st.sidebar.slider("Minimum Circle Spacing (grid cells)", 0, 3, 1, 1,
-                                             help="Minimum number of grid cells between circles. Set to 0 to allow adjacent placement.")
+        min_light_level = st.sidebar.slider("Minimum Light Level", 0.1, 1.0, 0.4, 0.05)
+        min_light_spacing = st.sidebar.slider("Minimum Light Spacing (grid cells)", 0, 3, 1, 1,
+                                             help="Minimum number of grid cells between lighrs. Set to 0 to allow adjacent placement.")
         grid_size = st.sidebar.slider("Grid Size", 0.5, 2.0, 1.0, 0.1)
         
         return {
-            'circle_radius': circle_radius,
             'area_cell_size': area_cell_size,
             'min_light_level': min_light_level,
-            'min_circle_spacing': min_circle_spacing,
+            'min_light_spacing': min_light_spacing,
             'grid_size': grid_size
         }
     
     def setup_grid_placement_params(self):
         """Set up parameters for grid placement model."""
         st.sidebar.header("Grid Placement Parameters")
-        circle_radius = st.sidebar.slider("Circle Radius", 0.5, 3.0, 1.5, 0.1)
         wall_distance = st.sidebar.slider("Distance from Walls", 0.5, 3.0, 1.2, 0.1)
         horizontal_spacing = st.sidebar.slider("Horizontal Spacing", 1.0, 5.0, 2.5, 0.1)
         vertical_spacing = st.sidebar.slider("Vertical Spacing", 1.0, 5.0, 2.5, 0.1)
         
         return {
-            'circle_radius': circle_radius,
             'wall_distance': wall_distance,
             'horizontal_spacing': horizontal_spacing,
             'vertical_spacing': vertical_spacing
@@ -145,13 +141,11 @@ class AppController:
             return OptimizationModel(
                 room_vertices,
                 grid_size=params['grid_size'],
-                circle_radius=params['circle_radius'],
                 area_cell_size=params['area_cell_size']
             ), OptimizationView()
         else:  # Grid Placement Model
             return GridPlacementModel(
                 room_vertices,
-                circle_radius=params['circle_radius'],
                 wall_distance=params['wall_distance'],
                 horizontal_spacing=params['horizontal_spacing'],
                 vertical_spacing=params['vertical_spacing']
@@ -161,7 +155,7 @@ class AppController:
         """Handle the optimization model workflow."""
         # Run optimization when button is clicked
         if st.button("Run Optimization"):
-            with st.spinner("Optimizing circle placement..."):
+            with st.spinner("Optimizing light placement..."):
                 status_placeholder = st.empty()
                 
                 def status_callback(status_type, message):
@@ -172,32 +166,32 @@ class AppController:
                     elif status_type == "success":
                         status_placeholder.success(message)
                 
-                circles, cell_coverage, grid_averages = model.solve(
+                lights, cell_coverage, grid_averages = model.solve(
                     min_light_level=params['min_light_level'],
-                    min_circle_spacing=params['min_circle_spacing'],
+                    min_light_spacing=params['min_light_spacing'],
                     status_callback=status_callback
                 )
                 
                 # Visualization
-                fig = view.visualize(model, circles, cell_coverage)
+                fig = view.visualize(model, lights, cell_coverage)
                 st.pyplot(fig)
                 
                 # Save results in session state for tables
-                st.session_state['circles'] = circles
+                st.session_state['lights'] = lights
                 st.session_state['grid_averages'] = grid_averages
                 st.session_state['cell_coverage'] = cell_coverage
                 st.session_state['is_optimized'] = True
                 st.session_state['is_grid_placed'] = False
         elif not st.session_state.get('is_optimized', False):
-            # Show an initial room visualization without circles
+            # Show an initial room visualization without lights
             fig = view.create_empty_room_visualization(model.room)
             st.pyplot(fig)
-            st.info("Click 'Run Optimization' to find the optimal circle placement.")
+            st.info("Click 'Run Optimization' to find the optimal light placement.")
         else:
             # Show previously generated optimization results if they exist
-            circles = st.session_state.get('circles', [])
+            lights = st.session_state.get('lights', [])
             cell_coverage = st.session_state.get('cell_coverage', {})
-            fig = view.visualize(model, circles, cell_coverage)
+            fig = view.visualize(model, lights, cell_coverage)
             st.pyplot(fig)
     
     def handle_grid_placement_model(self, model, view):
@@ -205,14 +199,14 @@ class AppController:
         # Run grid placement when button is clicked
         if st.button("Generate Grid Placement"):
             with st.spinner("Generating grid placement..."):
-                circles, cell_coverage = model.solve()
+                lights, cell_coverage = model.solve()
                 
                 # Visualization
-                fig = view.visualize(model, circles, cell_coverage)
+                fig = view.visualize(model, lights, cell_coverage)
                 st.pyplot(fig)
                 
                 # Save results in session state for tables
-                st.session_state['circles'] = circles
+                st.session_state['lights'] = lights
                 st.session_state['cell_coverage'] = cell_coverage
                 st.session_state['is_grid_placed'] = True
                 st.session_state['is_optimized'] = False
@@ -235,29 +229,29 @@ class AppController:
                 st.session_state['grid_averages'] = grid_averages
         
         elif not st.session_state.get('is_grid_placed', False):
-            # Show an initial room visualization without circles
+            # Show an initial room visualization without lights
             fig = view.create_empty_room_visualization(model.room)
             st.pyplot(fig)
             st.info("Click 'Generate Grid Placement' to create a grid-based light placement.")
         else:
             # Show previously generated grid placement results if they exist
-            circles = st.session_state.get('circles', [])
+            lights = st.session_state.get('lights', [])
             cell_coverage = st.session_state.get('cell_coverage', {})
-            fig = view.visualize(model, circles, cell_coverage)
+            fig = view.visualize(model, lights, cell_coverage)
             st.pyplot(fig)
     
     def display_results(self, model):
         """Display results in the sidebar."""
         st.subheader("Results")
-        if 'circles' in st.session_state:
-            st.metric("Number of Circles", len(st.session_state['circles']))
+        if 'lights' in st.session_state:
+            st.metric("Number of Lights", len(st.session_state['lights']))
             st.metric("Room Area", f"{model.room_area:.2f} sq units")
             
-            # Display circle positions
-            st.subheader("Circle Positions")
-            circle_df_data = [{"X": x, "Y": y} for x, y in st.session_state['circles']]
-            if circle_df_data:
-                st.dataframe(circle_df_data, height=200)
+            # Display light positions
+            st.subheader("Light Positions")
+            light_df_data = [{"X": x, "Y": y} for x, y in st.session_state['lights']]
+            if light_df_data:
+                st.dataframe(light_df_data, height=200)
             
             # Display average coverage
             st.subheader("Grid Cell Coverage")
@@ -284,39 +278,37 @@ class AppController:
             st.markdown("""
             ## How the Optimization Model Works
 
-            This app optimizes the placement of circles to provide gradient coverage in a room:
+            This app optimizes the placement of lights to provide gradient coverage in a room:
 
-            1. **Problem**: Place the minimum number of circles while ensuring each grid cell has at least the specified minimum light level.
-            2. **Gradient Coverage**: Light intensity decreases with distance from the circle center.
+            1. **Problem**: Place the minimum number of lights while ensuring each grid cell has at least the specified minimum light level.
+            2. **Gradient Coverage**: Light intensity decreases with distance from the light center.
             3. **Optimization**: Uses integer linear programming to find the optimal solution.
-            4. **Spacing Constraint**: Controls the minimum distance between any two circles.
+            4. **Spacing Constraint**: Controls the minimum distance between any two lights.
 
             ## Parameters Explained
 
-            - **Circle Radius**: Radius of each coverage circle
             - **Area Cell Size**: Granularity for measuring coverage (smaller = more accurate but slower)
             - **Minimum Light Level**: Required average light intensity in each grid cell
-            - **Minimum Circle Spacing**: Controls how far apart circles must be placed (in grid cells)
+            - **Minimum Light Spacing**: Controls how far apart lights must be placed (in grid cells)
                         
             ## Model Constraints:
             1. Each grid cell must have a minimum average light level.
-            2. Circles cannot be placed too close to each other (based on the minimum circle spacing).
-            3. Circles must be placed within the room boundaries.
+            2. Lights cannot be placed too close to each other (based on the minimum light spacing).
+            3. Lights must be placed within the room boundaries.
             """)
         else:  # Grid Placement Model
             st.markdown("""
             ## How the Grid Placement Model Works
 
-            This approach places circles in a regular grid pattern:
+            This approach places lights in a regular grid pattern:
 
-            1. **Wall Distance**: Circles are placed at a fixed distance from walls
-            2. **Regular Spacing**: Circles are placed with fixed horizontal and vertical spacing
-            3. **Gradient Coverage**: Light intensity decreases with distance from each circle
+            1. **Wall Distance**: Lights are placed at a fixed distance from walls
+            2. **Regular Spacing**: Lights are placed with fixed horizontal and vertical spacing
+            3. **Gradient Coverage**: Light intensity decreases with distance from each light
             4. **Simple Algorithm**: No optimization - just regular grid placement
 
             ## Parameters Explained
 
-            - **Circle Radius**: Radius of each coverage circle
             - **Distance from Walls**: How far to place lights from the walls
             - **Horizontal Spacing**: Distance between lights in the horizontal direction
             - **Vertical Spacing**: Distance between lights in the vertical direction
@@ -328,19 +320,19 @@ class AppController:
             st.markdown("---")
             st.subheader("Model Comparison")
             
-            opt_circles = len(st.session_state.get('circles', []) if st.session_state.get('is_optimized', False) else [])
-            grid_circles = len(st.session_state.get('circles', []) if st.session_state.get('is_grid_placed', False) else [])
+            opt_lights = len(st.session_state.get('lights', []) if st.session_state.get('is_optimized', False) else [])
+            grid_lights = len(st.session_state.get('lights', []) if st.session_state.get('is_grid_placed', False) else [])
             
             col1, col2 = st.columns(2)
             with col1:
-                st.metric("Optimization Model", f"{opt_circles} circles")
+                st.metric("Optimization Model", f"{opt_lights} lights")
             with col2:
-                st.metric("Grid Placement Model", f"{grid_circles} circles")
+                st.metric("Grid Placement Model", f"{grid_lights} lights")
             
             st.markdown("""
             ### Key Differences
             
-            - **Optimization Model**: Finds the minimum number of circles needed to meet coverage requirements
+            - **Optimization Model**: Finds the minimum number of lights needed to meet coverage requirements
             - **Grid Placement Model**: Uses a fixed pattern based on spacing parameters
             
             Try adjusting parameters of both models to see how they affect coverage and efficiency!
@@ -349,9 +341,9 @@ class AppController:
     def run(self):
         """Run the application."""
         # Setup the page
-        st.set_page_config(page_title="Circle Coverage Optimizer", layout="wide")
-        st.title("Gradient Circle Coverage Optimization")
-        st.write("Optimize the placement of circles to provide gradient coverage in a room.")
+        st.set_page_config(page_title="Light Coverage Optimizer", layout="wide")
+        st.title("Gradient Light Coverage Optimization")
+        st.write("Optimize the placement of lights to provide gradient coverage in a room.")
         
         # Setup sidebar
         solution_approach, room_source = self.setup_sidebar()
@@ -394,4 +386,4 @@ class AppController:
         
         # Footer
         st.markdown("---")
-        st.caption("Circle Coverage Optimization Tool")
+        st.caption("Light Coverage Optimization Tool")
