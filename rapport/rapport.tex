@@ -109,13 +109,13 @@ The goal of this project is to optimize the placement of light sources within a 
 ensuring that the lighting stays within a defined range of intensity (measured in LUX). Rather than maximizing the number of lights, the focus is on 
 maximizing the illuminated area and ensuring an even distribution of light, avoiding both underlit and overlit zones.
 
-Each light source is modeled as a red dot, and it produces a distribution of light visualized using color gradients. Brighter areas are shown in green, 
+Each light source is modeled as a red dot, and it produces a distribution of light, visualized using color gradients. Brighter areas are shown in green, 
 indicating stronger illumination, while darker areas appear more blue, representing lower light intensity. Corners and edge zones, where lighting is less critical, 
 are deprioritized in the optimization process, allowing for a more efficient allocation of light coverage in central and more important areas.
 
 This project was conducted in collaboration with the engineering consultancy firm COWI, and guided academically by out course supervisor, Dag. We are a team of five 
 students with diverse academic backgrounds. Throughout the spring semester, we have worked closely together, holding regular internal meetings as well as joint sessions 
-with COWI and our academic advisor, to define requirements, develop solutions, and refine our approach.
+with COWI and our academic advisor to define requirements, develop solutions, and refine our approach.
 
 
 \newpage
@@ -175,7 +175,7 @@ for placing light fixtures in any room of any size.
 \subsection{Method}
 
 As previously mentioned, a genetic algorithm/RL approach was presented to us. Although this can be a good solution in some cases, we found out that
-this method does not provide heuristics that are sufficiently effective or efficient for approximating the optimal solution.
+this method does not provide heuristics that are sufficiently effective or efficient for approximating the \textit{optimal} solution.
 
 Our approach to optimizing light fixture placement employs linear programming (LP), a powerful mathematical optimization technique that allows us to 
 find the exact minimum number of fixtures required while satisfying all regulatory and aesthetic constraints.
@@ -211,11 +211,11 @@ integer programming challenges in the problem space.
 \subsubsection{Pattern and symmetry}
 One thing we spent some time exploring was the idea of creating a pattern in the chaos. The first challenge was defining what a “nice” pattern actually means. There are many ways to place lights that can look good and maintain a cohesive feel in a room, but putting that into a concrete definition is difficult.
 
-We started experimenting with a grid-like structure of rows and columns, where the goal was to optimize both the spacing between light sources and their distance from the walls. This approach turned out to be very time-consuming and limiting. It excluded a variety of potentially good patterns, some of which might be better suited to certain types of rooms—and didn’t necessarily optimize the number of light sources used.
+We started experimenting with a grid-like structure of rows and columns, where the goal was to optimize both the spacing between light sources and their distance from the walls. This approach turned out to be very time-consuming and limiting. It excluded a variety of potentially good patterns, some of which might be better suited to certain types of rooms – and didn’t necessarily optimize the number of light sources used.
 
 During this process, we also tested a constraint where no two light sources could be placed directly next to each other. Interestingly, this often led to patterns that felt more balanced and comfortable, even without a precise definition of what we were aiming for.
 
-Although this idea didn’t make it into the final implementation, it helped us better understand how certain constraints can naturally lead to more visually appealing layouts.
+% Although this idea didn’t make it into the final implementation, it helped us better understand how certain constraints can naturally lead to more visually appealing layouts.
 
 \subsubsection{Light distribution}
 Another area we spent some time on was distribution function for light. With so many different types of lamps, designing a distribution function that accurately reflects real-world lighting is a complex task. A fully accurate model would require a lot of computation and a many constraints to adapt to all possible light sources.
@@ -241,13 +241,13 @@ to find a solution, without success.
 In our project, we chose to model the problem using linear programming (LP), which offered a transparent, 
 structured, and computationally efficient method to reach an optimal solution under given constraints. The 
 only problem was crafting these constraints in a way that would yield a feasible solution. Defining whether something 
-is optimal or not is a subjective matter, dependent on . While LP proved to 
+is optimal or not is a subjective matter, dependent on how much you prioritize (for instance) symmetry vs. an actually optimal solution. While LP proved to 
 be effective for the problem at hand, there are several areas where our approach, and the overall process, could be 
 improved or extended. 
 
 \subsubsection{Clearity}
 Early in the project, we realized that more detailed input from the company regarding practical constraints 
-and priorities would have helped in developing a more realistic model. Certain business rules or preferences 
+and priorities would have helped in developing a more realistic model. Certain regulations or preferences 
 may not have been fully captured by the LP formulation, due to either simplifications made on our side or 
 limitations in the initial communication. For future projects, closer collaboration in the problem-formulation 
 phase could enhance model relevance and accuracy.
@@ -258,6 +258,8 @@ declined. For further improvements, we suggest implementing a caching mechanism.
 and significantly improve responsiveness, particularly when working with larger datasets or when users repeatedly 
 test different scenarios. This is especially important for deploying the tool in a real-world environment where several 
 users may interact with it simultaneously.
+
+\newpage
 
 \subsubsection{Scalability}
 While our model worked well for the current dataset and problem size, we identified potential issues with scalability. 
@@ -275,7 +277,7 @@ This results in visually good, regular arrangements, but lacks adaptability to l
 
 The second model is a constraint-based optimization solution that mathematically ensures compliance with lighting thresholds,
 fixture spacing, and other constraints. This model provides precise results and guarantees that the lighting meets the minimum lux requirement
-throughout the room. However, the output can sometimes appear less pleasing, especially in irregular spaces, as the focus is purely on optimization rather than visual symmetry.
+throughout the room. However, the output can sometimes appear less visually appealing, especially in irregular spaces, as the focus is purely on optimization rather than visual symmetry.
 
 Through our experiments, we observed that the optimization model performs particularly well when the required lighting level is higher,
 such as 300 lux or more. In such cases, the denser fixture placement leaves more room for the solver to balance aesthetics and coverage.

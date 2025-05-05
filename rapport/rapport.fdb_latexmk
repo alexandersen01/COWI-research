@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1746363626.8802 "/Users/jakobsverrealexandersen/Documents/COWI-research/rapport/rapport.tex" "rapport.pdf" "rapport" 1746363627.73235 0
-  "/Users/jakobsverrealexandersen/Documents/COWI-research/rapport/rapport.tex" 1746363625.34988 16903 29676e6dcacd99fb0d26be12bedcf1bb ""
+["pdflatex"] 1746436024.65727 "/Users/jakobsverrealexandersen/Documents/COWI-research/rapport/rapport.tex" "rapport.pdf" "rapport" 1746436025.37416 0
+  "/Users/jakobsverrealexandersen/Documents/COWI-research/rapport/rapport.tex" 1746436023.96982 17013 0dcd5dae12a92df987c8adda65113158 ""
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/data/fonts/map/pdftex/pdftex.map" 1744545844.48619 81245 b430549db98beb1d3a03071ea49cab66 ""
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/data/miktex/data/le/pdftex/pdflatex.fmt" 1744540792.33739 12053120 514daef0bf02ba4323c4635a48e46f13 ""
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/enc/dvips/fontawesome/fontawesometwo.enc" 1744540810.38827 2679 32dd8ae231bf4a0752b98f62dc097183 ""
@@ -15,6 +15,7 @@
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmbx12.tfm" 1744540101.02888 1324 c910af8c371558dc20f2d7822f66fe64 ""
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmr12.tfm" 1744540101.04567 1288 655e228510b4c2a1abe905c368440826 ""
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmr17.tfm" 1744540101.04602 1292 296a67155bdbfc32aa9c636f21e91433 ""
+  "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmti10.tfm" 1744540101.06098 1480 aa8e34af0eb6a2941b776984cf1dfdc4 ""
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/fontawesome/FontAwesome--fontawesometwo.tfm" 1744540810.39745 1360 76c648952c3cfb458d3ca1d9dde7e9bf ""
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx10.pfb" 1744540084.55977 34811 78b52f49e893bcba91bd7581cdc144c0 ""
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx12.pfb" 1744540084.56149 32080 340ef9bf63678554ee606688e7b5339d ""
@@ -28,6 +29,7 @@
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr7.pfb" 1744540084.60314 32762 224316ccc9ad3ca0423a14971cfa7fc1 ""
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1744540084.63084 32569 5e5ddc8df908dea60932f3c484a54c0d ""
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy7.pfb" 1744540084.63433 32716 08e384dc442464e7285e891af9f45947 ""
+  "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmti10.pfb" 1744540084.64262 37944 359e864bd06cde3b1cf57bb20757fb06 ""
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/symbols/msbm10.pfb" 1744540084.75331 34694 ad62b13721ee8eda1dcc8993c8bd7041 ""
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/fontawesome/FontAwesome.pfb" 1744540810.40771 173219 54847ac27638e1e28852258f5be2fa20 ""
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/tex/context/base/mkii/supp-pdf.mkii" 1744540130.85452 71627 94eb9990bed73c364d7f53f960cc8c5b ""
@@ -112,10 +114,10 @@
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/tex/latex/upquote/upquote.sty" 1744540802.97181 1088 c352a232e0e0bfae98e68b206e4febe5 ""
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/tex/latex/url/url.sty" 1744540147.5008 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "/Users/jakobsverrealexandersen/Library/Application Support/MiKTeX/texmfs/install/tex/latex/xcolor/xcolor.sty" 1744540147.6956 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "rapport.aux" 1746363627.57129 2776 1b6543570d780adb460d761283742d5d "pdflatex"
-  "rapport.out" 1746363627.57819 2733 8be0f2a0e0156465914ec676c667f6e8 "pdflatex"
-  "rapport.tex" 1746363625.34988 16903 29676e6dcacd99fb0d26be12bedcf1bb ""
-  "rapport.toc" 1746363627.5849 1686 0920605f9e32ae435b50f0a40de75f98 "pdflatex"
+  "rapport.aux" 1746436025.24407 2776 0ba6cfd841bb5a8477c38473ea5cced4 "pdflatex"
+  "rapport.out" 1746436025.24971 2733 8be0f2a0e0156465914ec676c667f6e8 "pdflatex"
+  "rapport.tex" 1746436023.96982 17013 0dcd5dae12a92df987c8adda65113158 ""
+  "rapport.toc" 1746436025.25069 1686 5eb5ba67a1c2beb46f23bf130b6d70e2 "pdflatex"
   "tetris.png" 1744545785.29539 4789 13b028c7a0a0a6ca3346c71c97b27842 ""
   (generated)
   "rapport.aux"
