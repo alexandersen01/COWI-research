@@ -92,9 +92,10 @@ class RoomModel:
         return normalized
 
 class BaseSolverModel:
-    """Base class for light placement solvers."""
-    def __init__(self, room_vertices):
+    """Base class for circle placement solvers."""
+    def __init__(self, room_vertices, circle_radius=1.0):
         self.room = Polygon(room_vertices)
+        self.circle_radius = circle_radius
         self.room_area = self.room.area
         
         # Create custom colormap from green to blue with more intermediate colors
@@ -106,29 +107,29 @@ class BaseSolverModel:
         ]
         self.gradient_cmap = LinearSegmentedColormap.from_list("custom", colors)
     
-    def get_coverage_value(self, light_center, point):
-        """Calculate gradient coverage value based on distance from light center."""
-        dx = light_center[0] - point[0]
-        dy = light_center[1] - point[1]
-        dz = -2
-        distance = np.sqrt(dx**2 + dy**2 + dz**2)
+    def get_coverage_value(self, circle_center, point):
+        """Calculate gradient coverage value based on distance from circle center."""
+        dx = circle_center[0] - point[0]
+        dy = circle_center[1] - point[1]
+        distance = np.sqrt(dx * dx + dy * dy)
         
-
-        cos_theta = abs(dz) / distance
-
-        return (1 * cos_theta) / distance**2
+        if distance <= self.circle_radius:
+            normalized_distance = distance / self.circle_radius
+            return 1 / (1 + 2 * normalized_distance)
+        
+        return 0
 
 class GridPlacementModel(BaseSolverModel):
-    """Model for grid-based light placement."""
-    def __init__(self, room_vertices, wall_distance=1.2, 
+    """Model for grid-based circle placement."""
+    def __init__(self, room_vertices, circle_radius=1.0, wall_distance=1.2, 
                  horizontal_spacing=2.5, vertical_spacing=2.5):
-        super().__init__(room_vertices)
+        super().__init__(room_vertices, circle_radius)
         self.wall_distance = wall_distance
         self.horizontal_spacing = horizontal_spacing
         self.vertical_spacing = vertical_spacing
     
     def generate_grid_placement(self):
-        """Generate light placements in a grid pattern with specified spacing from walls."""
+        """Generate circle placements in a grid pattern with specified spacing from walls."""
         bounds = self.room.bounds
         x_min, y_min, x_max, y_max = bounds
         
@@ -141,17 +142,17 @@ class GridPlacementModel(BaseSolverModel):
         y_positions = np.arange(y_start, y_max, self.vertical_spacing)
         
         # Generate all possible combinations of x and y
-        light_candidates = []
+        circle_candidates = []
         for x in x_positions:
             for y in y_positions:
                 point = Point(x, y)
                 if self.room.contains(point):
-                    light_candidates.append((x, y))
+                    circle_candidates.append((x, y))
         
-        return light_candidates
+        return circle_candidates
     
-    def calculate_coverage(self, lights):
-        """Calculate the coverage for a set of lights using a fine grid."""
+    def calculate_coverage(self, circles):
+        """Calculate the coverage for a set of circles using a fine grid."""
         # Generate a fine grid of points to evaluate coverage
         bounds = self.room.bounds
         x_min, y_min, x_max, y_max = bounds
@@ -167,8 +168,8 @@ class GridPlacementModel(BaseSolverModel):
                 if self.room.contains(point):
                     # Calculate total coverage at this point
                     total_coverage = 0
-                    for light_x, light_y in lights:
-                        coverage = self.get_coverage_value((light_x, light_y), (x, y))
+                    for circle_x, circle_y in circles:
+                        coverage = self.get_coverage_value((circle_x, circle_y), (x, y))
                         total_coverage += coverage
                     
                     cell_coverage[(x, y)] = total_coverage
@@ -176,16 +177,16 @@ class GridPlacementModel(BaseSolverModel):
         return cell_coverage
     
     def solve(self):
-        """Generate a grid-based placement of lights."""
-        lights = self.generate_grid_placement()
-        cell_coverage = self.calculate_coverage(lights)
+        """Generate a grid-based placement of circles."""
+        circles = self.generate_grid_placement()
+        cell_coverage = self.calculate_coverage(circles)
         
-        return lights, cell_coverage
+        return circles, cell_coverage
 
 class OptimizationModel(BaseSolverModel):
-    """Model for optimized light placement."""
-    def __init__(self, room_vertices, grid_size=1.0, area_cell_size=0.1):
-        super().__init__(room_vertices)
+    """Model for optimized circle placement."""
+    def __init__(self, room_vertices, grid_size=1.0, circle_radius=1.0, area_cell_size=0.1):
+        super().__init__(room_vertices, circle_radius)
         self.grid_size = grid_size
         self.area_cell_size = area_cell_size
 
@@ -234,24 +235,24 @@ class OptimizationModel(BaseSolverModel):
             (x, y) for x, y in area_cells if min_x <= x < max_x and min_y <= y < max_y
         ]
 
-    def solve(self, min_light_level=0.4, min_light_spacing=1, status_callback=None):
+    def solve(self, min_light_level=0.2, min_circle_spacing=1, status_callback=None):
         """
-        Solve the optimization problem to minimize number of lights while maintaining
-        minimum average coverage in each grid cell, with adjustable spacing between lights.
+        Solve the optimization problem to minimize number of circles while maintaining
+        minimum average coverage in each grid cell, with adjustable spacing between circles.
 
         Args:
-            min_light_level (float): Minimum average light level required in each grid cell (default: 0.4)
-            min_light_spacing (int): Minimum number of grid cells between lights (default: 1)
+            min_light_level (float): Minimum average light level required in each grid cell (default: 0.2)
+            min_circle_spacing (int): Minimum number of grid cells between circles (default: 1)
             status_callback (callable): Optional callback function to report status
         """
         grid_points = self.generate_grid_points()
         area_cells = self.generate_area_cells()
 
-        prob = pulp.LpProblem("MinimumlightCoverage", pulp.LpMinimize)
+        prob = pulp.LpProblem("MinimumCircleCoverage", pulp.LpMinimize)
 
-        # Binary variables for light placement
-        light_vars = pulp.LpVariable.dicts(
-            "light", ((x, y) for x, y in grid_points), cat="Binary"
+        # Binary variables for circle placement
+        circle_vars = pulp.LpVariable.dicts(
+            "circle", ((x, y) for x, y in grid_points), cat="Binary"
         )
 
         # Continuous variables for cell light levels
@@ -259,22 +260,22 @@ class OptimizationModel(BaseSolverModel):
             "cell", ((x, y) for x, y in area_cells), lowBound=0
         )
 
-        # Objective: Minimize number of lights
-        prob += pulp.lpSum(light_vars[x, y] for x, y in grid_points)
+        # Objective: Minimize number of circles
+        prob += pulp.lpSum(circle_vars[x, y] for x, y in grid_points)
 
-        # Set up constraints for small cell values based on light coverage
+        # Set up constraints for small cell values based on circle coverage
         for cell_x, cell_y in area_cells:
-            covering_lights = []
+            covering_circles = []
             for grid_x, grid_y in grid_points:
                 coverage_value = self.get_coverage_value(
                     (grid_x, grid_y), (cell_x, cell_y)
                 )
                 if coverage_value > 0:
-                    covering_lights.append(
-                        coverage_value * light_vars[grid_x, grid_y]
+                    covering_circles.append(
+                        coverage_value * circle_vars[grid_x, grid_y]
                     )
 
-            prob += cell_vars[cell_x, cell_y] == pulp.lpSum(covering_lights)
+            prob += cell_vars[cell_x, cell_y] == pulp.lpSum(covering_circles)
 
         # Add minimum average constraint for each grid cell using the parameter
         for grid_x, grid_y in grid_points:
@@ -284,8 +285,8 @@ class OptimizationModel(BaseSolverModel):
                     cell_vars[x, y] for x, y in grid_cells
                 ) >= min_light_level * len(grid_cells)
         
-        # Add constraint to prevent lights from being too close to each other
-        if min_light_spacing > 0:
+        # Add constraint to prevent circles from being too close to each other
+        if min_circle_spacing > 0:
             for x1, y1 in grid_points:
                 # Calculate neighbors based on spacing parameter
                 neighbors = []
@@ -299,13 +300,13 @@ class OptimizationModel(BaseSolverModel):
                             dy / self.grid_size
                         )
                         # If the distance is less than the minimum spacing
-                        if distance_in_grid_cells <= min_light_spacing:
+                        if distance_in_grid_cells <= min_circle_spacing:
                             neighbors.append((x2, y2))
                 
                 # For each close neighbor, add constraint
                 for x2, y2 in neighbors:
-                    # Add constraint: at most one of these two cells can have a light
-                    prob += light_vars[x1, y1] + light_vars[x2, y2] <= 1
+                    # Add constraint: at most one of these two cells can have a circle
+                    prob += circle_vars[x1, y1] + circle_vars[x2, y2] <= 1
 
         # Display a status message if callback provided
         if status_callback:
@@ -323,10 +324,10 @@ class OptimizationModel(BaseSolverModel):
                 status_callback("success", status_message)
 
         # Extract results
-        selected_lights = []
+        selected_circles = []
         for x, y in grid_points:
-            if light_vars[x, y].value() > 0.5:
-                selected_lights.append((x, y))
+            if circle_vars[x, y].value() > 0.5:
+                selected_circles.append((x, y))
 
         # Calculate light levels for visualization and verification
         cell_coverage = {}
@@ -337,9 +338,9 @@ class OptimizationModel(BaseSolverModel):
 
             for cell_x, cell_y in grid_cells:
                 cell_total = 0
-                for light_x, light_y in selected_lights:
+                for circle_x, circle_y in selected_circles:
                     coverage = self.get_coverage_value(
-                        (light_x, light_y), (cell_x, cell_y)
+                        (circle_x, circle_y), (cell_x, cell_y)
                     )
                     cell_total += coverage
                 cell_coverage[(cell_x, cell_y)] = cell_total
@@ -349,4 +350,4 @@ class OptimizationModel(BaseSolverModel):
                 grid_avg = grid_total / len(grid_cells)
                 grid_averages[(grid_x, grid_y)] = grid_avg
 
-        return selected_lights, cell_coverage, grid_averages
+        return selected_circles, cell_coverage, grid_averages
