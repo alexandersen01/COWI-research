@@ -58,11 +58,11 @@ class RoomModel:
     def get_room_ids(self):
         """Return list of room IDs."""
         return list(self.rooms.keys())
-    
+   
     def get_room_coordinates(self, room_id):
         """Return coordinates for a specific room ID."""
         return self.rooms.get(room_id, [])
-    
+   
     def normalize_coordinates(self, coords, scale_factor=10, meters_per_unit=0.2):
         """
         Normalize room coordinates to a reasonable size.
@@ -81,14 +81,14 @@ class RoomModel:
         # Calculate min values for x and y to shift to origin
         min_x = min(point[0] for point in coords)
         min_y = min(point[1] for point in coords)
-        
+       
         # Shift to origin, scale down, and adjust to match meters_per_unit
         normalized = []
         for point in coords:
             x = (point[0] - min_x) / scale_factor / meters_per_unit
             y = (point[1] - min_y) / scale_factor / meters_per_unit
             normalized.append((x, y))
-        
+
         return normalized
 
 class BaseSolverModel:
